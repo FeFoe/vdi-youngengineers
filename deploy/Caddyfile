@@ -32,6 +32,15 @@
 	@ics path /termine.ics
 	header @ics Content-Type "text/calendar; charset=utf-8"
 
+	# „Meine Arbeitskreise“: Kalender wird beim Abruf aus den Bausteinen unter /kalender/ zusammengesetzt
+	# (Vorlage assets/kalender/auswahl.caddy, Bausteine layouts/partials/kalender/bausteine.html)
+	@auswahl path /kalender/auswahl.ics
+	templates @auswahl {
+		mime text/calendar
+	}
+	header @auswahl Content-Type "text/calendar; charset=utf-8"
+	header @auswahl Cache-Control "public, max-age=3600"
+
 	file_server
 
 	handle_errors {

@@ -23,8 +23,13 @@
       "chat" (printf "https://wa.me/%s" $w.whatsapp | base64Encode)
       "rabatt" (printf "https://wa.me/%s?text=%s" $w.whatsapp (printf "Hi %s, habt ihr gerade einen Rabattcode für die VDI-Mitgliedschaft?" $k.whatsappName | urlquery) | base64Encode) -}}
 {{- end -}}
+{{- /* Arbeitskreise für „Meine Arbeitskreise“ (data/arbeitskreise.toml), nach Name sortiert */ -}}
+{{- $aks := slice -}}
+{{- range $id, $ak := hugo.Data.arbeitskreise }}{{ $aks = $aks | append (dict "id" $id "name" $ak.name) }}{{ end -}}
 {{- $daten := dict
     "termine" (partial "termine.html" .)
+    "arbeitskreise" (sort $aks "name")
+    "kalenderAuswahl" ("kalender/auswahl.ics" | absURL)
     "stammtische" $st
     "fotos" $fotos
     "kontakt" (dict "email" $k.email "whatsappName" $k.whatsappName)

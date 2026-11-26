@@ -50,6 +50,8 @@ const CHECK = '<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fil
 /* Daten kommen aus Hugo (layouts/partials/daten.html): Termine von vdi.de und eigene Termine, Stammtische, Fotos, Kontakt */
 const DATEN = JSON.parse(document.getElementById("ye-daten").textContent);
 const EVENTS = DATEN.termine;
+const AKS = DATEN.arbeitskreise || [];
+const akName = id => (AKS.find(a=>a.id===id)||{}).name || id;
 const AUSGEBLENDET = []; /* wird schon beim Bauen in Hugo gefiltert (data/termine_anpassungen.yaml) */
 
 /* ---------- Zeit ---------- */
@@ -86,18 +88,21 @@ function durLabel(e){
 }
 
 /* ---------- Zustand ---------- */
-const state = { tab:'entdecken', group:new Set(), online:true, saved:new Set(), done:new Set(), decided:[], openId:null, quiet:false, radius:0 };
+const state = { tab:'entdecken', group:new Set(), ak:new Set(), online:true, saved:new Set(), done:new Set(), decided:[], openId:null, quiet:false, radius:0 };
 function loadSet(key,set){ try { const raw=localStorage.getItem(key); if(raw) JSON.parse(raw).forEach(id=>set.add(id)); } catch(_){} }
 loadSet('ye-hh-saved', state.saved); loadSet('ye-hh-done', state.done);
-try { const f=JSON.parse(localStorage.getItem('ye-hh-filter')||'{}'); if(Array.isArray(f.group)) f.group.forEach(v=>state.group.add(v)); if(typeof f.online==='boolean') state.online=f.online; state.quiet=!!f.quiet; if(Number.isInteger(f.radius)&&f.radius>=0&&f.radius<RANGES.length) state.radius=f.radius; } catch(_){}
+try { const f=JSON.parse(localStorage.getItem('ye-hh-filter')||'{}'); if(Array.isArray(f.group)) f.group.forEach(v=>state.group.add(v)); if(typeof f.online==='boolean') state.online=f.online; state.quiet=!!f.quiet; if(Number.isInteger(f.radius)&&f.radius>=0&&f.radius<RANGES.length) state.radius=f.radius; if(Array.isArray(f.ak)) f.ak.filter(a=>AKS.some(x=>x.id===a)).forEach(a=>state.ak.add(a)); } catch(_){}
 function persist(){
   try { localStorage.setItem('ye-hh-saved', JSON.stringify([...state.saved])); } catch(_){}
   try { localStorage.setItem('ye-hh-done', JSON.stringify([...state.done])); } catch(_){}
-  try { localStorage.setItem('ye-hh-filter', JSON.stringify({group:[...state.group],online:state.online,quiet:state.quiet,radius:state.radius})); } catch(_){}
+  try { localStorage.setItem('ye-hh-filter', JSON.stringify({group:[...state.group],online:state.online,quiet:state.quiet,radius:state.radius,ak:[...state.ak]})); } catch(_){}
 }
 const byId = id => EVENTS.find(e=>e.id===id);
 function upcoming(){ const now=new Date(); return EVENTS.filter(e=>endDate(e)>now && !AUSGEBLENDET.some(h=>(e.url||'').endsWith('/'+h.slug))).sort((a,b)=>startDate(a)-startDate(b)); }
-function byChips(e){ return (!state.group.size||state.group.has(e.group))&&(state.online||e.mode!=='online'); }
+function byChips(e){ return (!state.group.size||state.group.has(e.group))&&(state.online||e.mode!=='online')&&akPasst(e); }
+/* Meine Arbeitskreise: YE Hamburg und bundesweite YE-Formate bleiben immer sichtbar */
+function immerSichtbar(e){ return e.group==='ye' || (e.group==='yenet' && e.mode!=='reise'); }
+function akPasst(e){ return !state.ak.size || immerSichtbar(e) || (e.ak||[]).some(a=>state.ak.has(a)); }
 function filtered(){ return upcoming().filter(e=>inRange(e)&&byChips(e)); }
 
 /* ---------- Helfer ---------- */
@@ -140,6 +145,7 @@ function sfHtml(e){
     '<div><dt>Zeit</dt><dd>'+esc(timeLabel(e))+'</dd></div>'+
     '<div class="wide"><dt>Ort</dt><dd>'+esc(e.place)+(e.address?'<br><span style="font-weight:500;color:var(--muted)">'+esc(e.address)+'</span>':'')+'</dd></div>'+
     '<div class="wide sf-org"><dt>Veranstalter</dt><dd>'+esc(e.org)+'</dd></div>'+
+    (e.ak&&e.ak.length ? '<div class="wide sf-ak"><dt>'+(e.akArt==='ak'?'Arbeitskreis':'Passt zu')+'</dt><dd>'+esc(e.ak.map(akName).join(', '))+(e.akVon?'<br><span>'+esc(e.akVon)+'</span>':'')+(e.akArt==='thema'?'<br><span>Zuordnung nach Stichworten</span>':'')+'</dd></div>' : '')+
     '<div class="wide'+(reg(e).open&&!reg(e).deadline&&!e.spots?' sf-reg-plain':'')+'"><dt>Anmeldung</dt><dd class="reg-'+(reg(e).open?'open':'closed')+'">'+esc(reg(e).text)+(e.spots&&reg(e).open?'<br><span>'+esc(e.spots)+'</span>':'')+'</dd></div>'+
   '</dl>';
 }
@@ -191,6 +197,10 @@ function renderChrome(){
   document.getElementById('filters').hidden = state.tab==='gemerkt';
   document.getElementById('cnt-all').textContent = filtered().length;
   document.getElementById('online-toggle').setAttribute('aria-pressed',String(state.online));
+  { const n=state.ak.size, cnt=document.getElementById('cnt-ak'); cnt.hidden=!n; cnt.textContent=n;
+    document.getElementById('ak-knopf').setAttribute('aria-pressed',String(!!n));
+    const weg=n ? upcoming().filter(e=>inRange(e)&&!akPasst(e)&&(!state.group.size||state.group.has(e.group))&&(state.online||e.mode!=='online')).length : 0;
+    document.getElementById('ak-note').textContent = weg ? weg+' Termine anderer Arbeitskreise ausgeblendet' : ''; }
   const rad=document.getElementById('radius'); rad.value=state.radius;
   const lim=RANGES[state.radius]; const lbl = lim===Infinity ? 'Ohne Grenze' : 'Hamburg + '+lim+' km';
   document.getElementById('radius-out').textContent=lbl; rad.setAttribute('aria-valuetext',lbl);
@@ -469,6 +479,7 @@ document.addEventListener('click',ev=>{
   const o=ev.target.closest('[data-open]'); if(o){ openDetail(o.dataset.open); }
 });
 document.addEventListener('keydown',ev=>{
+  if (!document.getElementById('ak-overlay').hidden){ if(ev.key==='Escape') akSchliessen(); return; }
   if (!document.getElementById('match-overlay').hidden){ if(ev.key==='Escape') closeMatch(); return; }
   if (!document.getElementById('overlay').hidden){ if(ev.key==='Escape') closeDetail(); return; }
   const o=ev.target.closest && ev.target.closest('[data-open][role="button"]');
@@ -480,7 +491,7 @@ document.addEventListener('keydown',ev=>{
 });
 document.getElementById('overlay').addEventListener('click',ev=>{ if(ev.target.id==='overlay') closeDetail(); });
 /* Offener Dialog: alles andere inert (Fokus bleibt im Dialog, kein Scrollen dahinter) */
-const OVERLAYS=['overlay','match-overlay','quiz-overlay'].map(id=>document.getElementById(id));
+const OVERLAYS=['overlay','match-overlay','quiz-overlay','ak-overlay'].map(id=>document.getElementById(id));
 function hintergrundSperren(){ const offen=OVERLAYS.find(o=>o&&!o.hidden);
   document.querySelectorAll('body > *, main > *').forEach(el=>{ if(el.tagName==='MAIN'||el.tagName==='SCRIPT') return; const sperren=!!offen && !el.contains(offen) && !OVERLAYS.includes(el); el.inert=sperren; });
   document.documentElement.style.overflow = offen ? 'hidden' : ''; }
@@ -844,5 +855,45 @@ function route(){
   /* Sprungziel von der Linkseite /links/: WhatsApp-Community direkt anbieten */
   if (h==='whatsapp'){ setHash('mitmachen'); document.getElementById('mitmachen').scrollIntoView(); waQuiz('community', document.querySelector('#mitmachen [data-wa="community"]')); }
 }
+
+/* ---------- Meine Arbeitskreise ----------
+   Auswahl bleibt im Browser (ye-hh-filter). Der Kalender-Link setzt Caddy auf dem Server zusammen
+   (static/kalender/auswahl.ics, Bausteine aus layouts/index.kalender.ics). */
+let akFokus=null;
+function akKalender(){ const u=DATEN.kalenderAuswahl+'?ak='+[...state.ak].sort().join(','); return {https:u, webcal:u.replace(/^https?:\/\//,'webcal://')}; }
+function akZaehlen(id){ return upcoming().filter(e=>(e.ak||[]).includes(id)).length; }
+function akRender(){
+  const box=document.getElementById('ak-dialog'); const n=state.ak.size; const k=akKalender();
+  box.innerHTML='<button class="close" id="ak-close" aria-label="Schließen">'+XICON+'</button>'+
+    '<div class="d-head"><h2 class="d-title" id="ak-title">Meine Arbeitskreise</h2>'+
+    '<p class="ak-text">Wähle aus, was dich interessiert. Dann siehst du nur noch Termine dieser Arbeitskreise, unsere Young-Engineers-Termine immer. Überregionale Termine ohne Arbeitskreis (z. B. VDI-Webinare) ordnen wir nach Stichworten zu. Deine Auswahl bleibt nur in diesem Browser.</p></div>'+
+    '<fieldset class="ak-liste"><legend class="sr-only">Arbeitskreise</legend>'+
+    AKS.map(a=>{ const z=akZaehlen(a.id); return '<label class="ak-zeile"><input type="checkbox" value="'+esc(a.id)+'"'+(state.ak.has(a.id)?' checked':'')+'><span>'+esc(a.name)+'</span><span class="ak-anzahl" aria-label="'+z+' kommende Termine">'+z+'</span></label>'; }).join('')+
+    '</fieldset>'+
+    (n ? '<div class="ak-kalender"><h3 class="mini-h">Als Kalender abonnieren</h3>'+
+           '<p class="ak-hinweis">Deine Arbeitskreise und unsere Young-Engineers-Termine in einem Kalender, der sich selbst aktualisiert. Für Google Kalender die Adresse kopieren und dort unter „Weitere Kalender → Per URL“ einfügen. Änderst du die Auswahl später, abonniere den Kalender neu.</p>'+
+           '<a class="btn sm" id="ak-abo" href="'+esc(k.webcal)+'">'+CAL+'Auswahl abonnieren</a>'+
+           '<div class="ak-unter"><button class="btn sm" id="ak-kopieren" type="button">'+COPY+'Adresse kopieren</button><button class="btn sm" id="ak-leeren" type="button">Auswahl löschen</button></div>'+
+           '<div class="fallback" id="ak-fallback" hidden></div></div>' : '')+
+    '<div class="d-actions">'+
+      '<button class="btn blue" id="ak-fertig" type="button">'+(n?'Fertig – '+n+' ausgewählt':'Fertig')+'</button>'+
+    '</div>';
+  box.querySelector('#ak-close').onclick=akSchliessen;
+  box.querySelector('#ak-fertig').onclick=akSchliessen;
+  box.querySelectorAll('.ak-liste input').forEach(i=>i.onchange=()=>{ if(i.checked) state.ak.add(i.value); else state.ak.delete(i.value); persist(); state.decided=[]; renderAll(); akAktualisieren(); });
+  const kp=box.querySelector('#ak-kopieren'); if(kp) kp.onclick=()=>copyText(akKalender().https, box.querySelector('#ak-fallback'));
+  const lr=box.querySelector('#ak-leeren'); if(lr) lr.onclick=()=>{ state.ak.clear(); persist(); state.decided=[]; renderAll(); akRender(); box.querySelector('#ak-fertig').focus(); };
+}
+/* Nach dem Anhaken nur Knöpfe und Zähler erneuern, damit Fokus und Scrollposition in der Liste bleiben */
+function akAktualisieren(){
+  const box=document.getElementById('ak-dialog'); const top=box.scrollTop; const fokus=document.activeElement&&document.activeElement.value;
+  akRender(); box.scrollTop=top; if(fokus){ const i=box.querySelector('.ak-liste input[value="'+fokus+'"]'); if(i) i.focus(); }
+}
+function akOeffnen(){ akFokus=document.activeElement; akRender(); document.getElementById('ak-overlay').hidden=false; const i=document.querySelector('#ak-dialog .ak-liste input'); (i||document.getElementById('ak-close')).focus(); }
+function akSchliessen(){ document.getElementById('ak-overlay').hidden=true; if(akFokus&&document.contains(akFokus)) akFokus.focus(); }
+document.getElementById('ak-knopf').onclick=akOeffnen;
+document.getElementById('ak-overlay').addEventListener('click',ev=>{ if(ev.target.id==='ak-overlay') akSchliessen(); });
+if(!AKS.length) document.querySelector('.fak').hidden=true;
+
 window.addEventListener('hashchange',route);
 route();

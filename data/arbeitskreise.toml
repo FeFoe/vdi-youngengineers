@@ -1,0 +1,171 @@
+# Arbeitskreise für den Filter „Meine Arbeitskreise“ und den Kalender /kalender/auswahl.ics?ak=…
+# Wird von tools/vdi_termine.py (Zuordnung) und von Hugo (Auswahlliste) gelesen.
+#
+# Je Arbeitskreis:
+#   name        Anzeigename auf der Website
+#   ak          regulärer Ausdruck für den Namen des Arbeitskreises auf vdi.de. Wird mit den Zeilen
+#               „AK …“ / „Arbeitskreis …“ unter „Auf einen Blick“ verglichen – passt damit auch bei
+#               gleichnamigen Arbeitskreisen anderer Bezirksvereine.
+#   stichworte  regulärer Ausdruck für Titel und Teaser. Gilt nur für Termine ohne Arbeitskreis
+#               (VDI-Webinare, Landesverband, „Hamburger Arbeitskreise“ allgemein). Ein Termin darf
+#               dabei in mehreren Arbeitskreisen landen.
+# Groß-/Kleinschreibung egal. Schlüssel (z. B. „medizintechnik“) nur aus a–z, 0–9 und Bindestrich:
+# Er steht im Kalender-Link und im Browser gespeichert, also später nicht mehr umbenennen.
+# Nicht aufgenommen, weil keine Fach-Arbeitskreise: Hamburger Arbeitskreise (Sammelbegriff),
+# AK SuJ-Hamburg, BGr Lüneburg, Hamburger VDI-Preis, VDI Betriebsingenieure Regionalgruppe Nord,
+# Young Engineers Hamburg (immer sichtbar), VDIni-Clubs, Zukunftspiloten, Vorstand (ausgeschlossen).
+
+[bahntechnik]
+name = "Bahntechnik"
+ak = 'Bahntechnik'
+stichworte = '\bBahn|Schiene|Eisenbahn|\bICE\b'
+
+[bautechnik]
+name = "Bautechnik"
+ak = 'Bautechnik'
+stichworte = 'Bautechnik|Bauwesen|Hochbau|Tiefbau|Brücke|Beton|Bauwerk|\bBIM\b|Starkregen|Baustelle'
+
+[betriebswirtschaft]
+name = "Betriebswirtschaft, Management und Vertrieb"
+ak = 'Betriebswirtschaft|Vertrieb|Projektmanagement|Qualitätsmanagement|Industrial Engineering'
+stichworte = '\bManagement|Führungskr|Leadership|Vertrieb|Betriebswirtschaft|Controlling|Verhandlung'
+
+[embedded-software]
+name = "Embedded Software Engineering"
+ak = 'Embedded'
+stichworte = 'Embedded|Firmware|Mikrocontroller|Echtzeit'
+
+[energietechnik]
+name = "Energietechnik"
+ak = 'Energietechnik'
+stichworte = 'Energie|\bStrom(netz|versorgung|markt)?\b|Wasserstoff|Photovoltaik|Solar|Windkraft|Windenergie|Windpark|Batterie|Kraftwerk|Fernwärme|Wärmewende'
+
+[entwicklung-konstruktion]
+name = "Entwicklung und Konstruktion"
+ak = 'Entwicklung,? Konstruktion|Konstruktion'
+stichworte = 'Konstruktion|Produktentwicklung|\bCAD\b|Simulation|\bFEM\b|Systems Engineering|Design Thinking'
+
+[facility-management]
+name = "Facility Management"
+ak = 'Facility'
+stichworte = 'Facility|Gebäudemanagement|Immobilie'
+
+[fahrzeugtechnik]
+name = "Fahrzeug- und Verkehrstechnik"
+ak = 'Fahrzeug'
+stichworte = 'Fahrzeug|Automobil|Elektromobil|E-Mobil|Verkehr|Mobilität|autonomes Fahren|\bLkw\b|\bPkw\b'
+
+[foerdertechnik]
+name = "Fördertechnik, Materialfluss und Logistik"
+ak = 'Fördertechnik'
+stichworte = 'Fördertechnik|Materialfluss|Intralogistik|Lagertechnik|\bKran'
+
+[frauen-im-ingenieurberuf]
+name = "Frauen im Ingenieurberuf"
+ak = 'Frauen im Ingenieurberuf'
+stichworte = 'Frauen|Ingenieurinnen|WoMentorING|Female'
+
+[informationstechnik]
+name = "Informations- und Medientechnik"
+ak = 'Informations- und Medientechnik|Informationstechnik'
+stichworte = 'Informatik|Quanten|\bIT\b|IT-|Software|Digitalisierung|\bDaten|Cloud|Cyber|Security|Medientechnik'
+
+[ingenieur-gesellschaft]
+name = "Ingenieur und Gesellschaft"
+ak = 'Ingenieur und Gesellschaft|Technikgeschichte'
+stichworte = '\bEthik|Technikfolgen|Technikgeschichte|Gesellschaft und Technik|Technik und Gesellschaft'
+
+[lebensmitteltechnik]
+name = "Lebensmitteltechnologie und -verfahrenstechnik"
+ak = 'Lebensmittel'
+stichworte = 'Lebensmittel|\bFood|Brauerei|Getränk|Molkerei'
+
+[luft-und-raumfahrt]
+name = "Luft- und Raumfahrt"
+ak = 'Luft- und Raumfahrt'
+stichworte = 'Luftfahrt|Raumfahrt|Flugzeug|Aviation|Airbus|Lufthansa|Satellit|Drohne|Flughafen'
+
+[medizintechnik]
+name = "Medizintechnik"
+ak = 'Medizintechnik'
+stichworte = 'Medizin|Klinik|Krankenhaus|Gesundheit|Medical|Healthcare|Prothese'
+
+[meer-kueste-hafen]
+name = "Meer, Küste, Hafen"
+ak = 'Meer,? Küste|Küste'
+stichworte = 'Hafen|Küste|\bMeer\b|Meeres|Offshore|Hochwasser|Sturmflut|Deich|Wasserbau'
+
+[mess-und-automatisierungstechnik]
+name = "Mess- und Automatisierungstechnik"
+ak = 'Mess- und Automatisierung'
+stichworte = 'Messtechnik|Automatisierung|Automation|Sensor|Regelungstechnik|\bSPS\b|Prozessleit'
+
+[mikroelektronik]
+name = "Mikroelektronik"
+ak = 'Mikroelektronik'
+stichworte = 'Mikroelektronik|Halbleiter|\bChip|Elektronik|Leiterplatte'
+
+[nanotechnologie]
+name = "Nanotechnologie"
+ak = 'Nanotechnolog'
+stichworte = '\bNano'
+
+[produktion-und-logistik]
+name = "Produktion und Logistik"
+ak = 'Produktion und Logistik'
+stichworte = 'Logistik|Supply Chain|Lieferkette|\bLean\b'
+
+[produktionstechnik]
+name = "Produktionstechnik"
+ak = 'Produktionstechnik'
+stichworte = 'Produktionstechnik|Fertigung|Additive|3D-Druck|Werkzeugmaschine|\bCNC|Industrie 4\.0|Fabrik'
+
+[risikomanagement]
+name = "Risikomanagement und Zuverlässigkeit"
+ak = 'Risikomanagement'
+stichworte = 'Risiko|Zuverlässigkeit|Sicherheitstechnik|Funktionale Sicherheit|Resilienz|Brandschutz'
+
+[robotik-ki]
+name = "Robotik und angewandte KI"
+ak = 'Robotik'
+stichworte = 'Robot|Cobot|\bKI\b|Künstliche Intelligenz|\bAI\b|Machine Learning|ChatGPT|\bLLM'
+
+[schiffbau]
+name = "Schiffbau und Schiffstechnik"
+ak = 'Schiffbau'
+stichworte = 'Schiff|Werft|Maritim'
+
+[schweisstechnik]
+name = "Schweißtechnik"
+ak = 'Schweißtechnik|Schweisstechnik'
+stichworte = 'Schweiß|Schweiss|Fügetechnik|Löten'
+
+[schwingungstechnik-akustik]
+name = "Schwingungstechnik und Akustik"
+ak = 'Schwingungstechnik'
+stichworte = 'Schwingung|Akustik|Lärm|Vibration|\bSchall'
+
+[technische-gebaeudeausruestung]
+name = "Technische Gebäudeausrüstung"
+ak = 'Technische Gebäudeausrüstung'
+stichworte = 'Gebäudetechnik|Gebäudeausrüstung|\bTGA\b|Heizung|Lüftung|Klimatechnik|Sanitär|Smart Home|Wärmepumpe'
+
+[umwelttechnik]
+name = "Umwelttechnik"
+ak = 'Umwelttechnik'
+stichworte = 'Umwelt|Recycling|Kreislaufwirtschaft|Abfall|Müll|Emission|\bCO2|Klimaschutz|Abwasser|Wasseraufbereitung'
+
+[verfahrenstechnik]
+name = "Verfahrenstechnik"
+ak = 'Verfahrenstechnik'
+stichworte = 'Verfahrenstechnik|Chemie|Prozesstechnik|Anlagenbau|Raffinerie'
+
+[werkstofftechnik]
+name = "Werkstofftechnik"
+ak = 'Werkstofftechnik'
+stichworte = 'Werkstoff|Materialprüfung|Kunststoff|Composite|Faserverbund|Metall|Korrosion'
+
+[wertanalyse]
+name = "Wertanalyse / Value Management"
+ak = 'Wertanalyse|Value Management'
+stichworte = 'Wertanalyse|Value Management|Value Engineering'

@@ -260,8 +260,40 @@ def typografie(t: str) -> str:
     return re.sub(r"\be\.V\.", "e. V.", t)
 
 
-def einordnen(e: dict, cfg: dict, geo: Geo) -> dict:
-    org = " ".join(e.pop("orgRoh", []))
+def arbeitskreise_laden() -> dict:
+    """data/arbeitskreise.toml: gemeinsame Tabelle für Zuordnung (hier) und Auswahlliste (Hugo)."""
+    datei = WURZEL / "data" / "arbeitskreise.toml"
+    if not datei.exists():
+        return {}
+    tabelle = tomllib.loads(datei.read_text(encoding="utf-8"))
+    return {k: {"ak": re.compile(v["ak"], flags=re.I), "stichworte": re.compile(v["stichworte"], flags=re.I)}
+            for k, v in tabelle.items()}
+
+
+def arbeitskreis_zuordnen(e: dict, zeilen: list[str], aks: dict) -> None:
+    """Setzt e["ak"] (Schlüssel aus data/arbeitskreise.toml) und e["akArt"]:
+    "ak"    – Arbeitskreis steht auf der Detailseite (Zeile „AK …“ / „Arbeitskreis …“), auch bei anderen BVs;
+              e["akVon"] nennt dann den Bezirksverein, wenn es nicht Hamburg ist
+    "thema" – kein Arbeitskreis angegeben, Stichworte in Titel oder Teaser passen (auch mehrere)"""
+    if not aks or e.get("group") == "ye":
+        return
+    ak_zeilen = [z for z in zeilen if re.match(r"\s*(AK|Arbeitskreis)\b", z)]
+    treffer = [k for k, r in aks.items() if any(r["ak"].search(z) for z in ak_zeilen)]
+    if treffer:
+        e["ak"], e["akArt"] = treffer[:1], "ak"
+        bv = zeilen[0] if zeilen else ""
+        if bv and not re.search(r"Hamburger Bezirksverein", bv, flags=re.I):
+            e["akVon"] = typografie(bv)
+        return
+    text_ = e.get("title", "") + " " + e.get("teaser", "")
+    treffer = [k for k, r in aks.items() if r["stichworte"].search(text_)]
+    if treffer:
+        e["ak"], e["akArt"] = treffer, "thema"
+
+
+def einordnen(e: dict, cfg: dict, geo: Geo, aks: dict | None = None) -> dict:
+    zeilen = e.pop("orgRoh", [])
+    org = " ".join(zeilen)
     for feld in ("title", "org", "place", "teaser"):
         e[feld] = typografie(e.get(feld) or "")
     e["teaser"] = e["teaser"].rstrip(":").strip()
@@ -302,6 +334,7 @@ def einordnen(e: dict, cfg: dict, geo: Geo) -> dict:
             e["icon"] = icon
             break
     e.setdefault("tags", [])
+    arbeitskreis_zuordnen(e, zeilen, aks or {})
     return e
 
 
@@ -320,6 +353,7 @@ def main() -> int:
     geo = Geo(cfg, abruf, not args.ohne_geo)
     heute = dt.date.today()
     ausschluss = re.compile(cfg["ausschliessen"], flags=re.I)
+    aks = arbeitskreise_laden()
 
     links: list[str] = []
     for liste in cfg["listen"]:
@@ -346,7 +380,7 @@ def main() -> int:
         if ausschluss.search(e["title"] + " " + " ".join(e["org"].split(" · "))):
             print(f"  – ausgeschlossen: {e['title']}")
             continue
-        termine.append(einordnen(e, cfg, geo))
+        termine.append(einordnen(e, cfg, geo, aks))
         print(f"  + {e['start'][:10]} {e['title']}")
 
     # Übersichten, deren Karten direkt gelesen werden (Blättern über die Links der Seite, inkl. cHash)
@@ -359,6 +393,7 @@ def main() -> int:
             for e in neu:
                 gesehen.add(e["id"])
                 if dt.date.fromisoformat(e["end"]) >= heute and e["id"] not in {t["id"] for t in termine}:
+                    arbeitskreis_zuordnen(e, [], aks)
                     termine.append(e)
                     print(f"  + {e['start']} {e['title']}")
             weiter = re.findall(r'href="([^"]*currentPage%5D=(\d+)[^"]*)"', seite)

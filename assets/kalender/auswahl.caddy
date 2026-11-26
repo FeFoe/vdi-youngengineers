@@ -1,0 +1,21 @@
+{{- /* Caddy-Vorlage (nicht Hugo!): Hugo kopiert sie mit Kalenderkopf nach /kalender/auswahl.ics,
+       Caddy führt sie beim Abruf aus (deploy/Caddyfile, Direktive „templates“).
+       ?ak=schluessel1,schluessel2 – nur Schlüssel, zu denen /kalender/ak/<schluessel>.txt existiert;
+       YE-Termine (_ye) sind immer dabei, doppelte Termine werden nur einmal ausgegeben. */ -}}
+{{- $listen := list "_ye" -}}
+{{- range $i, $a := splitList "," (.Req.URL.Query.Get "ak") -}}
+{{- $a = trim $a -}}
+{{- if and (lt $i 40) (regexMatch "^[a-z0-9-]{1,48}$" $a) (not (has $a $listen)) -}}
+{{- if fileExists (printf "/kalender/ak/%s.txt" $a) }}{{ $listen = append $listen $a }}{{ end -}}
+{{- end -}}
+{{- end -}}
+{{- $ids := list -}}
+{{- range $listen -}}
+{{- range splitList "\n" (include (printf "/kalender/ak/%s.txt" .)) -}}
+{{- $id := trim . -}}
+{{- if and $id (regexMatch "^[A-Za-z0-9_.-]+$" $id) (not (has $id $ids)) }}{{ $ids = append $ids $id }}{{ end -}}
+{{- end -}}
+{{- end -}}
+{{- range $ids }}
+{{ include (printf "/kalender/t/%s.ics" .) | trim }}
+{{- end }}

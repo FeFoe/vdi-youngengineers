@@ -1,0 +1,34 @@
+{{- /* Stammtisch als Serientermin; Kontext: dict "alle" (partial termine.html) "host" */ -}}
+{{- $alle := .alle -}}{{- $host := .host -}}
+{{- $esc := `([,;\\])` -}}
+{{- $r := hugo.Data.stammtisch -}}
+{{- with $r }}
+{{- /* Stammtisch als Serientermin ohne Ende: letzter Dienstag im Monat.
+       Ausnahmen: Hamburger Feiertage, data/stammtisch.yaml „ausfallen“ und Monate mit konkretem YE-Termin (der steht dann einzeln drin). */}}
+{{- $tage := slice "SU" "MO" "TU" "WE" "TH" "FR" "SA" }}
+{{- $zeit := printf "T%s00" (replace $r.beginn ":" "") }}
+{{- $yeMonate := slice }}
+{{- range $alle }}{{ if and (eq .group "ye") (not .geplant) }}{{ $yeMonate = $yeMonate | append (substr .start 0 7) }}{{ end }}{{ end }}
+{{- $ausnahmen := slice }}
+{{- range $j := seq now.Year (add now.Year 10) }}{{ range $m := seq 1 12 }}
+  {{- $letzter := (time.AsTime (printf "%d-%02d-01" $j $m)).AddDate 0 1 -1 }}
+  {{- $tag := $letzter.AddDate 0 0 (mul -1 (mod (add (sub (int $letzter.Weekday) $r.wochentag) 7) 7)) }}
+  {{- if or (in $r.feiertage ($tag.Format "01-02")) (in ($r.ausfallen | default slice) ($tag.Format "2006-01-02")) (in $yeMonate ($tag.Format "2006-01")) }}
+    {{- $ausnahmen = $ausnahmen | append (printf "%s%s" ($tag.Format "20060102") $zeit) }}
+  {{- end }}
+{{- end }}{{ end }}
+BEGIN:VEVENT
+UID:stammtisch-serie@{{ $host }}
+DTSTAMP:{{ now.UTC.Format "20060102T150405Z" }}
+DTSTART;TZID=Europe/Berlin:20250128{{ $zeit }}
+DTEND;TZID=Europe/Berlin:20250128T{{ replace $r.ende ":" "" }}00
+RRULE:FREQ=MONTHLY;BYDAY=-1{{ index $tage $r.wochentag }}
+{{ with $ausnahmen }}EXDATE;TZID=Europe/Berlin:{{ delimit . "," }}
+{{ end -}}
+SUMMARY:{{ $r.titel }}
+LOCATION:Hamburg (Ort folgt)
+DESCRIPTION:{{ replaceRE $esc `\$1` $r.teaser }}
+URL:{{ site.BaseURL }}
+STATUS:TENTATIVE
+END:VEVENT
+{{- end }}

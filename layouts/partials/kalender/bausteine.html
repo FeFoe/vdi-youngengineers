@@ -1,0 +1,30 @@
+{{- /* Bausteine für den zusammengesetzten Kalender /kalender/auswahl.ics?ak=schluessel1,schluessel2
+       Caddy setzt ihn beim Abruf aus diesen Dateien zusammen (assets/kalender/auswahl.caddy, deploy/Caddyfile):
+         /kalender/t/<termin-id>.ics   ein VEVENT je Termin (und stammtisch-serie.ics)
+         /kalender/ak/_ye.txt          Termine, die immer drin sind (YE Hamburg, bundesweite YE-Formate)
+         /kalender/ak/<schluessel>.txt Termin-IDs je Arbeitskreis (data/arbeitskreise.toml), eine pro Zeile
+         /kalender/auswahl.ics         Caddy-Vorlage mit Kalenderkopf
+       Kontext: dict "konkret" (Termine ohne Prognosen) "serie" (VEVENT der Stammtisch-Serie) "host" */ -}}
+{{- $host := .host -}}
+{{- $ye := slice -}}
+{{- with .serie -}}
+  {{- (resources.FromString "kalender/t/stammtisch-serie.ics" (printf "%s\n" .)).Publish -}}
+  {{- $ye = $ye | append "stammtisch-serie" -}}
+{{- end -}}
+{{- $proAk := dict -}}
+{{- range $e := .konkret -}}
+  {{- $inhalt := partial "kalender/termin.html" (dict "e" $e "host" $host) | strings.TrimSpace -}}
+  {{- (resources.FromString (printf "kalender/t/%s.ics" $e.id) (printf "%s\n" $inhalt)).Publish -}}
+  {{- if or (eq $e.group "ye") (and (eq $e.group "yenet") (ne $e.mode "reise")) }}{{ $ye = $ye | append $e.id }}{{ end -}}
+  {{- range $a := ($e.ak | default slice) -}}
+    {{- $proAk = merge $proAk (dict $a ((index $proAk $a | default slice) | append $e.id)) -}}
+  {{- end -}}
+{{- end -}}
+{{- (resources.FromString "kalender/ak/_ye.txt" (printf "%s\n" (delimit $ye "\n"))).Publish -}}
+{{- range $schluessel, $_ := hugo.Data.arbeitskreise -}}
+  {{- (resources.FromString (printf "kalender/ak/%s.txt" $schluessel) (printf "%s\n" (delimit (index $proAk $schluessel | default slice) "\n"))).Publish -}}
+{{- end -}}
+{{- with resources.Get "kalender/auswahl.caddy" -}}
+  {{- $kopf := partial "kalender/kopf.html" "VDI Hamburg – Young Engineers: meine Arbeitskreise" | strings.TrimSpace -}}
+  {{- (resources.FromString "kalender/auswahl.ics" (printf "%s\n%s\nEND:VCALENDAR\n" $kopf (strings.TrimSpace .Content))).Publish -}}
+{{- end -}}
