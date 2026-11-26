@@ -12,11 +12,8 @@
 {{- if eq (getenv "HUGO_VORSCHAU") "1" }}
 <meta name="robots" content="noindex, nofollow">
 {{- end }}
-<meta property="og:type" content="website">
-<meta property="og:locale" content="de_DE">
-<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
-<meta property="og:description" content="{{ .Description | default site.Params.beschreibung }}">
-<meta property="og:url" content="{{ .Permalink }}">
+{{ partial "seo.html" . }}
+<link rel="alternate" type="text/plain" title="Kurzbeschreibung für Sprachmodelle" href="{{ "llms.txt" | relURL }}">
 <link rel="preload" href="{{ "fonts/NunitoSans-Regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ "fonts/Rajdhani-Bold.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
 {{- $css := slice (resources.Get "css/schriften.css") (resources.Get "css/seite.css") (resources.Get "css/ergaenzungen.css") | resources.Concat "css/ye.css" | minify | fingerprint }}

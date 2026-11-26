@@ -1,0 +1,60 @@
+{{- /* Social-Media-Vorschau (Open Graph, Twitter) und strukturierte Daten (schema.org) */ -}}
+{{- $titel := cond .IsHome site.Title (printf "%s · %s" .Title site.Title) -}}
+{{- $text := .Description | default site.Params.beschreibung -}}
+{{- $bild := "" -}}
+{{- with resources.Get site.Params.teilenBild -}}
+  {{- /* JPEG statt WebP: wird von allen Plattformen (WhatsApp, LinkedIn, Signal …) zuverlässig angezeigt */ -}}
+  {{- $bild = .Fill "1200x630 Center jpg q80" -}}
+{{- end }}
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ $titel }}">
+<meta property="og:description" content="{{ $text }}">
+<meta property="og:url" content="{{ .Permalink }}">
+{{- with $bild }}
+<meta property="og:image" content="{{ .Permalink }}">
+<meta property="og:image:width" content="{{ .Width }}">
+<meta property="og:image:height" content="{{ .Height }}">
+<meta property="og:image:alt" content="{{ site.Params.teilenBildAlt }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{ .Permalink }}">
+<meta name="twitter:image:alt" content="{{ site.Params.teilenBildAlt }}">
+{{- end }}
+<meta name="twitter:title" content="{{ $titel }}">
+<meta name="twitter:description" content="{{ $text }}">
+{{- if .IsHome }}
+{{- $k := hugo.Data.kontakt -}}
+{{- $v := hugo.Data.verein -}}
+{{- $org := dict
+    "@type" "Organization"
+    "@id" (printf "%s#organisation" site.BaseURL)
+    "name" site.Title
+    "alternateName" "VDI Young Engineers Hamburg"
+    "url" site.BaseURL
+    "logo" ("favicon.svg" | absURL)
+    "email" $k.email
+    "sameAs" (slice $k.instagram $k.vdiSeite)
+    "parentOrganization" (dict "@type" "Organization" "name" $v.name "url" $v.impressumQuelle
+      "address" (dict "@type" "PostalAddress" "streetAddress" $v.strasse "postalCode" $v.plz "addressLocality" $v.ort "addressCountry" "DE"))
+-}}
+{{- $events := slice -}}
+{{- range first 30 (partial "termine.html" .) -}}
+  {{- $online := eq .mode "online" -}}
+  {{- $ort := cond $online (dict "@type" "VirtualLocation" "url" .url) (dict "@type" "Place" "name" (.place | default "Hamburg") "address" (.address | default "Hamburg")) -}}
+  {{- $e := dict
+      "@type" "Event"
+      "name" .title
+      "startDate" .start
+      "url" .url
+      "eventStatus" "https://schema.org/EventScheduled"
+      "eventAttendanceMode" (cond $online "https://schema.org/OnlineEventAttendanceMode" "https://schema.org/OfflineEventAttendanceMode")
+      "location" $ort
+      "organizer" (dict "@type" "Organization" "name" (.org | default site.Title))
+      "description" (.teaser | default .title)
+  -}}
+  {{- with .end }}{{ $e = merge $e (dict "endDate" .) }}{{ end -}}
+  {{- $events = $events | append $e -}}
+{{- end }}
+<script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" ($events | append $org | append (dict "@type" "WebSite" "name" site.Title "url" site.BaseURL "inLanguage" "de-DE" "publisher" (dict "@id" (printf "%s#organisation" site.BaseURL)))) | jsonify | safeJS }}</script>
+{{- end }}

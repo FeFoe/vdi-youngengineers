@@ -21,7 +21,11 @@ Der Webserver schreibt **kein Zugriffsprotokoll**, es werden also keine IP-Adres
 
 Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse ist, die Website sicher und funktionsfähig bereitzustellen.
 
-Die Verbindung ist per TLS verschlüsselt (HTTPS). Die Zertifikate stellt Let's Encrypt aus. Dabei werden keine Daten von Besucher*innen an Let's Encrypt übermittelt.
+Die Verbindung ist per TLS verschlüsselt (HTTPS).
+
+## Cloudflare
+
+Die Website wird über das Netzwerk von Cloudflare ausgeliefert (Cloudflare, Inc., 101 Townsend St., San Francisco, CA 94107, USA). Cloudflare leitet die Anfragen über einen verschlüsselten Tunnel an unseren Server weiter und schützt ihn vor Angriffen. Dabei verarbeitet Cloudflare technisch notwendig deine IP-Adresse und die Angaben deiner Anfrage. Cloudflare ist unter dem EU-US Data Privacy Framework zertifiziert; die Übermittlung in die USA stützt sich auf den Angemessenheitsbeschluss der EU-Kommission (Art. 45 DSGVO). Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO, unser berechtigtes Interesse liegt in einer sicheren und stabilen Auslieferung ohne offene Ports am eigenen Server. Fehlerberichte an Cloudflare (Network Error Logging) haben wir für diese Website abgeschaltet. Weitere Informationen: [Datenschutzerklärung von Cloudflare](https://www.cloudflare.com/de-de/privacypolicy/).
 
 ## Merkliste und Filter im Browser
 

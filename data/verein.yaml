@@ -20,4 +20,4 @@ impressumQuelle: https://www.vdi.de/netzwerke-community/bezirksvereine/hamburger
 datenschutzbeauftragter: ""
 
 # Hosting für die Datenschutzerklärung
-hosting: "einem Server in Deutschland, den ein ehrenamtlich tätiges Vereinsmitglied im Auftrag des Bezirksvereins betreibt"
+hosting: "einem eigenen virtuellen Server (Proxmox-Container) in Deutschland, ausgeliefert über Cloudflare"

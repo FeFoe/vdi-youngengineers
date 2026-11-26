@@ -15,10 +15,20 @@ disableKinds = ["taxonomy", "term", "RSS"]
   isPlainText = true
   notAlternative = true
 
+# Kurzbeschreibung für Sprachmodelle unter /llms.txt (llmstxt.org)
+[outputFormats.Llms]
+  mediaType = "text/plain"
+  baseName = "llms"
+  isPlainText = true
+  notAlternative = true
+
 [outputs]
-  home = ["HTML", "Kalender"]
+  home = ["HTML", "Kalender", "Llms"]
   section = ["HTML"]
   page = ["HTML"]
+
+[sitemap]
+  changeFreq = "weekly"
 
 [imaging]
   resampleFilter = "Lanczos"
@@ -28,4 +38,7 @@ disableKinds = ["taxonomy", "term", "RSS"]
 [params]
   beschreibung = "Das Ingenieurnetzwerk für Studierende und Berufseinsteiger*innen in Hamburg: Stammtische, Exkursionen und Vorträge von VDI Hamburger Bezirksverein e. V. – Young Engineers."
   traeger = "VDI Hamburger Bezirksverein e. V."
+  # Vorschaubild für WhatsApp, LinkedIn, Instagram & Co. (wird automatisch auf 1200 × 630 px zugeschnitten)
+  teilenBild = "fotos/202604.jpg"
+  teilenBildAlt = "Young Engineers beim Stammtisch in Hamburg"
   quellcode = "https://github.com/FeFoe/vdi-youngengineers"

@@ -1,0 +1,25 @@
+# {{ site.Title }}
+
+> {{ site.Params.beschreibung }}
+
+Die Young Engineers im {{ hugo.Data.verein.name }} sind das Netzwerk für Studierende und junge Berufstätige in Hamburg. Wir treffen uns jeden letzten Dienstag im Monat ab 18:30 Uhr zum Stammtisch an wechselnden Orten in Hamburg, organisieren Exkursionen und Vorträge und fahren gemeinsam zu überregionalen Treffen. Die Anmeldung zu Veranstaltungen läuft über vdi.de.
+
+## Seiten
+
+- [Startseite]({{ site.BaseURL }}): nächste Termine, Stammtisch-Karte, Mitmachen, Angebote des VDI, Kontakt
+- [Alle Termine]({{ "termine/" | absURL }}): kommende Termine als Liste
+- [Kalender-Abo]({{ "termine.ics" | absURL }}): alle Termine im iCalendar-Format
+- [Impressum]({{ "impressum/" | absURL }})
+- [Datenschutz]({{ "datenschutz/" | absURL }})
+- [Barrierefreiheit]({{ "barrierefreiheit/" | absURL }})
+
+## Kontakt
+
+- E-Mail: {{ hugo.Data.kontakt.email }}
+- Instagram: {{ hugo.Data.kontakt.instagram }}
+- Seite auf vdi.de: {{ hugo.Data.kontakt.vdiSeite }}
+
+## Kommende Termine
+{{ range first 20 (partial "termine.html" .) }}
+- {{ (time.AsTime .start).Format "02.01.2006" }}{{ if not .allday }}, {{ (time.AsTime .start).Format "15:04" }} Uhr{{ end }}: [{{ .title }}]({{ .url }}){{ with .place }} – {{ . }}{{ end }}{{ if .geplant }} (geplant){{ end }}
+{{- end }}
