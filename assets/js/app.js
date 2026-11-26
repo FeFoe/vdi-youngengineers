@@ -296,7 +296,7 @@ function decide(dir){
   if (busy) return; const d=deck(); if(!d.length) return; const e=d[0];
   const card=document.querySelector('.sheetcard[data-id="'+e.id+'"]');
   const apply=()=>{ state.decided.push({id:e.id,dir}); busy=false;
-    if(dir==='save'){ state.saved.add(e.id); persist(); renderAll(); if(state.quiet) toast('Gemerkt'); else showMatch(e); }
+    if(dir==='save'){ state.saved.add(e.id); persist(); renderAll(); nachMerken(e); }
     else renderAll();
     const naechste=deck()[0]; melden((dir==='save'?'Gemerkt: ':'Übersprungen: ')+e.title+(naechste?'. Nächste Karte: '+naechste.title:'. Keine weiteren Karten.')); };
   if (card && !reduce){ busy=true; card.dataset.hint=dir; card.style.transform='translate('+(dir==='save'?'':'-')+'130%,20px) rotate('+(dir==='save'?18:-18)+'deg)'; card.style.opacity='0'; setTimeout(apply,240); }
@@ -325,7 +325,19 @@ function bindDrag(card){
   card.addEventListener('keydown',ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); openDetail(card.dataset.id); } });
 }
 
-/* ---------- Match: nach dem Merken direkt zur Anmeldung ---------- */
+/* ---------- Match: nach dem Merken direkt zur Anmeldung ----------
+   Der Dialog erscheint nur beim ersten Merken pro Sitzung; danach eine kurze Meldung mit Anmeldelink,
+   damit schnelles Durchwischen nicht ständig unterbrochen wird. */
+function nachMerken(e){
+  if (!e) return;
+  let gezeigt=false; try{ gezeigt=sessionStorage.getItem('ye-match')==='1'; }catch(_){}
+  if (!state.quiet && !gezeigt){ try{ sessionStorage.setItem('ye-match','1'); }catch(_){} showMatch(e); return; }
+  if (state.quiet || !reg(e).open){ toast('Gemerkt'); return; }
+  const t=document.getElementById('toast');
+  t.innerHTML='Gemerkt · <a href="'+esc(e.url)+'" target="_blank" rel="noopener">Jetzt anmelden<span class="sr-only"> (öffnet neues Fenster)</span></a>';
+  t.hidden=false; t.querySelector('a').onclick=()=>{ t.hidden=true; };
+  clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,5000);
+}
 function showMatch(e){
   const box=document.getElementById('match');
   box.innerHTML = '<button class="close" id="m-close" aria-label="Schließen">'+XICON+'</button>' + bandHtml(e) +
@@ -451,7 +463,7 @@ document.getElementById('btn-copy-saved').onclick=e=>{
 function fokusMerken(el, attr, id){ const bereich=el.closest('[id]'); const bid=bereich&&bereich.id;
   return ()=>{ const wurzel=(bid&&document.getElementById(bid))||document; const n=wurzel.querySelector('['+attr+'="'+CSS.escape(id)+'"]'); if(n) n.focus(); }; }
 document.addEventListener('click',ev=>{
-  const h=ev.target.closest('[data-heart]'); if(h){ const id=h.dataset.heart; const was=state.saved.has(id); const zurueck=fokusMerken(h,'data-heart',id); toggleSave(id); zurueck(); if(!was && !state.quiet) showMatch(byId(id)); return; }
+  const h=ev.target.closest('[data-heart]'); if(h){ const id=h.dataset.heart; const was=state.saved.has(id); const zurueck=fokusMerken(h,'data-heart',id); toggleSave(id); zurueck(); if(!was) nachMerken(byId(id)); return; }
   const dn=ev.target.closest('[data-done]'); if(dn){ const id=dn.dataset.done; const zurueck=fokusMerken(dn,'data-done',id); if(state.done.has(id)) state.done.delete(id); else { state.done.add(id); toast('Abgehakt'); } persist(); renderAll(); zurueck(); return; }
   const tg=ev.target.closest('[data-tab-go]'); if(tg){ switchTab(tg.dataset.tabGo); document.getElementById('tab-'+tg.dataset.tabGo).focus(); return; }
   const o=ev.target.closest('[data-open]'); if(o){ openDetail(o.dataset.open); }
@@ -534,7 +546,22 @@ function pinSvg(pl){
 const DATA={x:225,y:40,w:770,h:590};
 const BOUNDS={x:-760,y:-520,w:2650,h:2340};
 function mapRatio(){ const b=document.getElementById('map').getBoundingClientRect(); return (b.width&&b.height)?b.height/b.width:DATA.h/DATA.w; }
-function baseVB(){ const r=mapRatio(); const tall=r>DATA.h/DATA.w; const w=tall?DATA.w+30:Math.min(DATA.h/r, DATA.w+30); const h=w*r; return {w, h, x:590-w/2, y:tall?345-h/2:Math.max(DATA.y,Math.min(DATA.y+DATA.h-h,345-h/2))}; }
+/* Auf schmalen Bildschirmen startet die Karte auf den Stammtisch-Pins statt auf ganz Hamburg,
+   damit die Pins in der Innenstadt nicht aufeinanderliegen */
+let FOKUS=null;
+function fokus(){
+  if (document.getElementById('map').getBoundingClientRect().width>=600) return DATA;
+  if (!FOKUS){ const ps=STAMMTISCHE.filter(x=>inView(x.geo)).map(x=>proj(x.geo));
+    if (!ps.length) return DATA;
+    /* einzelne Ausreißer (z. B. Harburg) nicht mitzählen: 10- bis 90-%-Bereich der Pins */
+    const q=(a,p)=>{ const s=[...a].sort((m,n)=>m-n); return s[Math.round(p*(s.length-1))]; };
+    const xs=ps.map(p=>p[0]), ys=ps.map(p=>p[1]), pad=60;
+    let x0=q(xs,.1)-pad, x1=q(xs,.9)+pad, y0=q(ys,.1)-pad-30, y1=q(ys,.9)+pad;
+    const min=420; if(x1-x0<min){ const m=(x0+x1)/2; x0=m-min/2; x1=m+min/2; } if(y1-y0<min){ const m=(y0+y1)/2; y0=m-min/2; y1=m+min/2; }
+    FOKUS={x:x0,y:y0,w:x1-x0,h:y1-y0}; }
+  return FOKUS;
+}
+function baseVB(){ const D=fokus(), cx=D.x+D.w/2, cy=D.y+D.h/2; const r=mapRatio(); const tall=r>D.h/D.w; const w=tall?D.w+30:Math.min(D.h/r, D.w+30); const h=w*r; return {w, h, x:cx-w/2, y:tall?cy-h/2:Math.max(D.y,Math.min(D.y+D.h-h,cy-h/2))}; }
 let VB=null;
 const mapZoom=()=>VB?baseVB().w/VB.w:1;
 const maxW=()=>Math.min(BOUNDS.w, BOUNDS.h/mapRatio());
@@ -571,8 +598,9 @@ function placePop(){
 }
 (function(){
   const svg=document.getElementById('map');
-  svg.addEventListener('wheel',ev=>{ if(!ev.ctrlKey && mapZoom()<=1.01) return; ev.preventDefault();
-    const [cx,cy]=toMap(ev.clientX,ev.clientY); zoomAt(Math.exp(-ev.deltaY*(ev.ctrlKey?0.012:0.002)),cx,cy); },{passive:false});
+  /* Mausrad scrollt immer die Seite; Zoomen mit Strg/⌘ + Mausrad oder Trackpad-Pinch (kommt als ctrlKey) */
+  svg.addEventListener('wheel',ev=>{ if(!ev.ctrlKey && !ev.metaKey) return; ev.preventDefault();
+    const [cx,cy]=toMap(ev.clientX,ev.clientY); const d=Math.max(-40,Math.min(40,ev.deltaMode===1?ev.deltaY*16:ev.deltaY)); zoomAt(Math.exp(-d*0.012),cx,cy); },{passive:false});
   let moved=0;
   const verschieben=(dx,dy)=>{ const m=svg.getScreenCTM(); if(!m) return; VB.x-=dx/m.a; VB.y-=dy/m.a; applyVB(); };
   /* Maus und Stift: Ziehen verschiebt die Karte */

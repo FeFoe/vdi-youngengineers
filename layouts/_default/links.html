@@ -101,7 +101,9 @@
     <h2 class="lk-h">Mehr</h2>
     {{- range hugo.Data.links }}
     {{- $extern := hasPrefix .url "http" }}
-    <a class="lk-btn" href="{{ if $extern }}{{ .url }}{{ else }}{{ .url | relURL }}{{ end }}"{{ if $extern }} rel="noopener"{{ end }}>
+    {{- $ziel := cond $extern .url (.url | relURL) }}
+    {{- if eq .url "/termine.ics" }}{{ $ziel = partial "kalender-abo.html" $ }}{{ end }}
+    <a class="lk-btn" href="{{ $ziel }}"{{ if $extern }} rel="noopener"{{ end }}>
       <span class="lk-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{{ index $ICONS .icon | default (index $ICONS "web") | safeHTML }}</svg></span>
       <span class="lk-txt"><b>{{ .titel }}</b>{{ with .text }}<span>{{ . }}</span>{{ end }}</span>
     </a>

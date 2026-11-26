@@ -1,0 +1,4 @@
+{{- /* Abo-Link für den Kalender: webcal:// legt auf iPhone, Mac und in Outlook ein echtes Abo an,
+       das sich selbst aktualisiert (https:// würde die Datei nur einmal importieren). */ -}}
+{{- $url := replaceRE "^https?://" "webcal://" ("termine.ics" | absURL) | safeURL -}}
+{{- return $url -}}

@@ -4,7 +4,7 @@
 <div class="wrap prose termine-liste">
   <h1>{{ .Title }}</h1>
   {{ .Content }}
-  <p><a class="btn" href="{{ "termine.ics" | relURL }}">Alle Termine als Kalender abonnieren (.ics)</a></p>
+  <p><a class="btn" href="{{ partial "kalender-abo.html" . }}">Alle Termine als Kalender abonnieren</a> <a href="{{ "termine.ics" | relURL }}" download>oder als .ics-Datei herunterladen</a></p>
   {{- $aktuell := "" }}
   {{- range partial "termine.html" . }}
     {{- $s := time.AsTime .start }}

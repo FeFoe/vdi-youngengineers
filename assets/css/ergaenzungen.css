@@ -211,7 +211,10 @@ html{scroll-padding-top:90px}
 @media (max-width:640px){.track{min-height:calc(82vw * .75)}}
 @media (min-width:861px){#nextcard{min-height:300px}}
 @media (max-width:640px){
-  .nav{-webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);mask-image:linear-gradient(90deg,#000 82%,transparent);padding-right:24px}
+  /* Alle fünf Punkte sichtbar statt seitlich versteckt: kurze Bezeichnungen, gleichmäßig verteilt */
+  .nav{justify-content:space-between;gap:0;margin-left:-6px!important;margin-right:-6px!important;width:calc(100% + 12px)!important;overflow:visible}
+  .nav a{padding:7px 6px}
+  .nav-lang{display:none}
   .stack{height:max(440px,min(560px,calc(100svh - 250px)))}
 }
 .chronik-btn{all:unset;box-sizing:border-box;cursor:pointer;display:block;padding:3px 0;border-radius:3px}
@@ -226,6 +229,11 @@ html{scroll-padding-top:90px}
 #termine .bar .wrap{padding-bottom:10px;gap:10px}
 .stackcol{gap:12px}
 .hint{font-size:13px;line-height:1.4}
+.toast a{color:#9DD0F4;margin-left:2px}
+/* Karte auf dem Handy quadratisch statt flach, mehr Platz zum Antippen der Pins */
+@media (max-width:640px){.mapbox svg#map{aspect-ratio:1/1}}
+.cal-datei{font-size:13px;color:var(--muted)}
+.cal-datei:hover{color:var(--accent)}
 .rnote:empty{display:none}
 
 /* Weggewischte Karten fliegen über den Rand hinaus: abschneiden, sonst verbreitert iOS Safari die Seite

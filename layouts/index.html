@@ -40,7 +40,8 @@
     </div>
     <div class="headside">
       <div class="stand">{{ with hugo.Data.vdi }}{{ with .stand }}Stand <b>{{ (time.AsTime .).Format "02.01.2006" }}</b> · {{ end }}{{ end }}Quelle vdi.de</div>
-      <a class="btn sm cal-abo" href="{{ "termine.ics" | relURL }}">Kalender abonnieren (.ics)</a>
+      <a class="btn sm cal-abo" href="{{ partial "kalender-abo.html" . }}">Kalender abonnieren</a>
+      <a class="cal-datei" href="{{ "termine.ics" | relURL }}" download>oder als .ics-Datei</a>
     </div>
   </div>
   <noscript><div class="wrap"><p class="note">Ohne JavaScript siehst du alle Termine in der <a href="{{ "termine/" | relURL }}">Terminliste</a>.</p></div></noscript>
@@ -81,7 +82,7 @@
             <button class="cbtn skip" id="btn-skip" aria-label="Weiter, nicht merken" title="Weiter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
             <button class="cbtn save" id="btn-save" aria-label="Merken" title="Merken"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 3 5 6.6 5c2.1 0 3.5 1.1 4.4 2.4h2C13.9 6.1 15.3 5 17.4 5 21 5 23.1 8.6 21.6 11.9 19.5 16.4 12 21 12 21z"/></svg></button>
           </div>
-          <p class="hint"><span class="hint-touch">Nach rechts wischen merkt, nach links blättert weiter, Tippen zeigt Details.</span><span class="hint-desk">Pfeiltasten oder Knöpfe: rechts merken, links weiter.</span></p>
+          <p class="hint"><span class="hint-touch">← weiter · merken → · Tippen für Details</span><span class="hint-desk">Pfeiltasten: ← weiter · merken →</span></p>
         </div>
         <aside class="vorschau" aria-labelledby="vorschau-h">
           <h3 class="mini-h" id="vorschau-h">Als Nächstes</h3>
@@ -108,7 +109,7 @@
     <div class="sec-head">
       <div>
         <h2 class="sec-h" id="karte-h">Hier waren wir schon</h2>
-        <p class="sec-lede">Seit Januar 2025 jeden Monat ein anderer Ort. Blau: unsere Stammtische, orange: kommende Termine. Tipp auf einen Pin, zoomen und verschieben mit zwei Fingern oder den Knöpfen.</p>
+        <p class="sec-lede">Seit Januar 2025 jeden Monat ein anderer Ort. Blau: unsere Stammtische, orange: kommende Termine. Tipp auf einen Pin, zoomen und verschieben mit zwei Fingern, Strg + Mausrad oder den Knöpfen.</p>
       </div>
     </div>
     <div class="mapgrid">

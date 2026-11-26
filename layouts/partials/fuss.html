@@ -20,7 +20,7 @@
       <h2 id="fuss-termine">Termine</h2>
       <ul>
         <li><a href="{{ "termine/" | relURL }}">Alle Termine als Liste</a></li>
-        <li><a href="{{ "termine.ics" | relURL }}">Kalender abonnieren</a></li>
+        <li><a href="{{ partial "kalender-abo.html" . }}">Kalender abonnieren</a></li>
         <li><a href="{{ $k.vdiSeite }}" rel="noopener">Unsere Seite auf vdi.de</a></li>
       </ul>
     </nav>
