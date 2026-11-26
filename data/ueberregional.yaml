@@ -1,0 +1,175 @@
+# Überregionale Treffen, an denen die Hamburger Young Engineers teilgenommen haben (Rückblick unter „Mehr vom VDI“).
+# Quelle: Instagram @vdi_youngengineers_hamburg und Chronik. Neuer Eintrag: oben anfügen; bild = Datei unter assets/rueckblick/ (optional).
+# format: eye, kongress, regional, yp, netzwerk
+- datum: "2026-09"
+  titel: "EYE-Konferenz in Porto"
+  format: eye
+  ort: "Porto"
+  text: "Die EYE-Konferenz 2026 fand vom 24. bis 27. September in Porto statt, ausgerichtet von der Ordem dos Engenheiros."
+  bild: porto.jpg   # Unsplash-Lizenz (ohne Quellenangabe nutzbar): unsplash.com/photos/Prb-sjOUBFs, Nick Karvounis
+- datum: "2026-11"
+  titel: "VDI Young Engineers Netzwerktreffen in Essen (bundesweit)"
+  art: "Netzwerktreffen"
+  format: netzwerk
+  ort: "Essen"
+  text: "Das bundesweite Netzwerktreffen der Young Engineers fand in Essen statt."
+  bild: essen.jpg
+- datum: "2026-10"
+  titel: "VDI Young Engineers Auftaktveranstaltung Nord 2026"
+  art: "Auftakt Nord"
+  format: regional
+  ort: "Kiel"
+  text: "Die Auftaktveranstaltung Nord führte auf die Festung Friedrichsort in Kiel, mit Brauereiführung und Rundgang. Studierende und Young Professionals kamen dabei ins Gespräch."
+  bild: kiel.jpg
+- datum: "2026-10"
+  titel: "Young Professionals Wochenende Hamburg"
+  format: yp
+  ort: "Harburger Binnenhafen"
+  text: "Zwei Tage lang kamen 25 Young Engineers aus ganz Deutschland zusammen. Auf dem Programm standen eine U5-Baustelle, ein Abendessen mit Elbblick und ein Workshop."
+  bild: yp2026-1.jpg
+- datum: "2026-06"
+  titel: "Regionalrunde Nordwest 2026"
+  art: "Regionalrunde Nordwest"
+  format: regional
+  ort: "Clausthal-Zellerfeld"
+  text: "Die Regionalrunde Nordwest im Oberharz bot drei Tage mit Technik, Workshops und Exkursionen."
+  bild: 1736600047638-8536bab383ab.jpg
+- datum: "2026-06"
+  titel: "Regionalrunde Nordost 2026"
+  art: "Regionalrunde Nordost"
+  format: regional
+  ort: "Erfurt"
+  text: "Die Regionalrunde Nordost fand zeitgleich zur Regionalrunde Nordwest in Erfurt statt."
+  bild: erfurt.jpg
+- datum: "2026-05"
+  titel: "Young Engineers Kongress 2026 in Stuttgart"
+  art: "Kongress"
+  format: kongress
+  ort: "Stuttgart"
+  text: "Der Young Engineers Kongress fand in Stuttgart statt und versammelte Young Engineers aus ganz Deutschland."
+  bild: stuttgart.jpg
+- datum: "2025-09"
+  titel: "Regionalrunde Nordwest 2025 in Lingen"
+  art: "Regionalrunde Nordwest"
+  format: regional
+  ort: "Lingen"
+  text: "Die Regionalrunde Nordwest fand 2025 in Lingen (Ems) statt."
+  bild: 1708447640752-02465a6c2fa5.jpg
+- datum: "2025"
+  titel: "Young Professionals Networking-Wochenende in Dresden"
+  format: yp
+  ort: "Dresden"
+  text: "Das Networking-Wochenende der Young Professionals fand in der Gläsernen Manufaktur in Dresden statt, mit einem Workshop zum Change Management."
+  bild: dresden.jpg
+- datum: "2025-05"
+  titel: "Young Engineers Kongress 2025 mit dem Deutschen Ingenieurtag"
+  art: "Day beim DIT"
+  format: kongress
+  ort: "Düsseldorf"
+  text: "Der Young Engineers Kongress fand gemeinsam mit dem Deutschen Ingenieurtag in Düsseldorf statt."
+  bild: dit2025.jpg
+  bildrecht: "© Julian Huke Photography"
+  url: https://www.vdi.de/news/detail/ideen-technik-netzwerk-hier-beginnt-zukunft
+- datum: "2024-06"
+  titel: "Regionalrunde Nordwest"
+  art: "Regionalrunde Nordwest"
+  format: regional
+  ort: "Bremerhaven"
+  text: "Die Regionalrunde Nordwest in Bremerhaven galt im Rückblick als Highlight des Jahres."
+  bild: C7zm7YNtEtj.jpg
+- datum: "2024"
+  titel: "Young Professionals Networking-Wochenende in Berlin"
+  format: yp
+  ort: "Berlin"
+  text: "Beim Networking-Wochenende der Young Professionals in Berlin ging es mit einem U-Bahn-Cabrio durch die Stadt, danach folgte ein Workshop zur Selbstführung."
+  bild: berlin-ubahn.jpg
+- datum: "2024-04"
+  titel: "Young Engineers Kongress München 2024"
+  art: "Kongress"
+  format: kongress
+  ort: "München"
+  text: "Der Young Engineers Kongress in München war ein bundesweites Treffen junger Ingenieurinnen und Ingenieure."
+  bild: C7sD3wYtR6H.jpg
+  url: https://www.vdi.de/news/detail/bericht-vdi-young-engineers-kongress-2024
+- datum: "2024-01"
+  titel: "EYE-Konferenz in Limerick"
+  format: eye
+  ort: "Limerick"
+  text: "Die 52. EYE-Konferenz in Limerick wurde von Engineers Ireland und EYE organisiert."
+  bild: C2M03L3NA9R.jpg
+  video: https://www.youtube.com/watch?v=zc1ZtItLrto
+- datum: "2023-11"
+  titel: "Aktiventreffen in Würzburg"
+  art: "Aktiventreffen"
+  format: netzwerk
+  ort: "Würzburg"
+  text: "Das bundesweite Aktiventreffen in Würzburg bot Stadtrallye, Workshops und eine Delegiertenversammlung."
+  bild: Cz2BRRPrBUV.jpg
+- datum: "2023-10"
+  titel: "EYE-Konferenz in Skopje"
+  format: eye
+  ort: "Skopje"
+  text: "Die Herbstkonferenz der European Young Engineers fand in Skopje statt und bot Gelegenheit zum internationalen Netzwerken."
+  bild: CytWHmQrNZD.jpg
+- datum: "2023-06"
+  titel: "Auftakt Young Engineers Nord an der Überseebrücke"
+  art: "Auftakt Nord"
+  format: regional
+  ort: "Überseebrücke, Hafen"
+  text: "Der Auftakt des Projekts Young Engineers Nord war ein gemeinsamer Tag am Hamburger Hafen mit anschließendem Beisammensein an den Landungsbrücken."
+  bild: CtFGIIOriso.jpg
+- datum: "2023"
+  titel: "Young Professionals Networking-Wochenende in Hamburg"
+  format: yp
+  ort: "Hamburg"
+  text: "Das Networking-Wochenende der Young Professionals fand 2023 in Hamburg statt."
+  bild: 1676806850845-97ae96df2e55.jpg
+- datum: "2023-05"
+  titel: "Deutscher Ingenieurtag 2023"
+  art: "Day beim DIT"
+  format: kongress
+  ort: "Berlin"
+  text: "Der Deutsche Ingenieurtag 2023 in Berlin fand nach der Corona-Zeit wieder in Präsenz statt, mit rund 300 Teilnehmenden. Etwa 30 Engagierte kamen aus dem VDI-Netzwerk."
+  bild: CszEnmdroaa.jpg
+- datum: "2023-05"
+  titel: "Frühjahrstreffen der kjVI in Hamburg"
+  art: "kjVI-Frühjahrstreffen"
+  format: netzwerk
+  ort: "Hamburg"
+  text: "Die kjVI, eine Gruppe Studierender und Doktorierender der Verfahrenstechnik, traf sich im Frühjahr in Hamburg. Auf dem Programm standen eine Hafenrundfahrt und Wettbewerbspläne."
+  bild: CszCGGVrHGE.jpg
+- datum: "2023-05"
+  titel: "EYE-Konferenz in Den Haag"
+  format: eye
+  ort: "Den Haag"
+  text: "Die EYE-Konferenz in Den Haag dauerte vier Tage mit Exkursionen, Workshops und einem Galadinner."
+  bild: CsEL4lVtgJZ.jpg
+  video: https://www.youtube.com/watch?v=Vl1iz9JfpHU
+- datum: "2023-05"
+  titel: "Treffen mit dem HKIE Young Members Committee"
+  art: "Besuch aus Hongkong (HKIE)"
+  format: netzwerk
+  ort: "Hamburg"
+  text: "Das Young Members Committee der Hong Kong Institution of Engineers besuchte Hamburg und diskutierte bei einem gemeinsamen Abend Nachhaltigkeit, neue Technologien und Work-Life-Balance."
+  bild: Cr52eAftxuQ.jpg
+- datum: "2023-04"
+  titel: "VDI Young Engineers meets Hannovermesse 2023"
+  art: "Hannover Messe"
+  format: netzwerk
+  ort: "Hannover Messe"
+  text: "Young Engineers aus ganz Deutschland besuchten gemeinsam die Hannovermesse 2023 und tauschten sich bei einem Get-together aus. Themen waren unter anderem Wasserstoff und Algenproduktion."
+  bild: Cr52sWctQS7.jpg
+- datum: "2022-09"
+  titel: "Young Engineers Kongress 2022 in Duisburg"
+  art: "Kongress"
+  format: kongress
+  ort: "Duisburg"
+  text: "Der Young Engineers Kongress fand 2022 in Duisburg statt."
+  bild: 1711099975816-e05ba1b91634.jpg
+- datum: "2021-05"
+  titel: "Young Engineers Kongress 2021 (online)"
+  art: "Kongress (online)"
+  format: kongress
+  ort: "Online"
+  text: "Der Young Engineers Kongress fand 2021 digital statt."
+  bild: 1612831455359-970e23a1e4e9.jpg

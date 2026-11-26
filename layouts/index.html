@@ -1,0 +1,291 @@
+{{ define "main" }}
+{{- $k := hugo.Data.kontakt -}}
+{{- $neu := `<span class="sr-only"> (öffnet neues Fenster)</span>` | safeHTML -}}
+<section class="hero" id="start" aria-labelledby="start-h">
+  <div class="wrap hero-in">
+    <div class="hero-txt">
+      <h1 id="start-h">{{ .Params.ueberschrift | default "Dein Ingenieurnetzwerk in Hamburg" }}</h1>
+      <p class="lede">{{ .Params.einleitung }}</p>
+      <div class="hero-cta">
+        <a class="btn blue" href="#kontakt" data-wa="community" aria-haspopup="dialog"><span id="wa-ico"></span>WhatsApp-Community beitreten</a>
+        <a class="btn insta" href="{{ $k.instagram }}" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1"/></svg>Folge uns auf Instagram</a>
+      </div>
+      <p class="mail-klein">Lieber per E-Mail? <a href="mailto:{{ $k.email }}">{{ $k.email }}</a></p>
+    </div>
+    <aside class="nextcard" id="nextcard" aria-label="Nächstes Treffen">
+      <noscript><p class="m-text">Die aktuellen Termine findest du in der <a href="{{ "termine/" | relURL }}">Terminliste</a>.</p></noscript>
+    </aside>
+  </div>
+  <svg class="ye-signet" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M12 2h18v18h-6V8H12z"/><path d="M2 12h18v18h-6V18H2z"/></svg>
+</section>
+
+<section class="strip" aria-labelledby="strip-h">
+  <div class="wrap strip-head">
+    <div><h2 class="strip-h" id="strip-h">Unsere letzten Stammtische</h2>
+    <p class="strip-insta">Mehr Fotos und Neuigkeiten: <a href="{{ $k.instagram }}" rel="noopener">{{ $k.instagramName }} auf Instagram</a></p></div>
+    <div class="strip-nav">
+      <button class="snav" id="strip-pause" type="button" aria-pressed="false" aria-label="Automatisches Weiterblättern anhalten"></button>
+      <button class="snav" id="strip-prev" type="button" aria-label="Vorheriges Foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button class="snav" id="strip-next" type="button" aria-label="Nächstes Foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+  <div class="track" id="track" tabindex="0" role="region" aria-label="Fotos vergangener Stammtische, seitlich scrollbar"></div>
+</section>
+
+<section class="sec" id="termine" aria-labelledby="termine-h">
+  <div class="wrap sec-head">
+    <div>
+      <h2 class="sec-h" id="termine-h">Was steht an?</h2>
+      <p class="sec-lede">Unsere Termine und ausgewählte Veranstaltungen des VDI in und um Hamburg. Swipe dich durch oder stöbere im Programm.</p>
+    </div>
+    <div class="headside">
+      <div class="stand">{{ with hugo.Data.vdi }}{{ with .stand }}Stand <b>{{ (time.AsTime .).Format "02.01.2006" }}</b> · {{ end }}{{ end }}Quelle vdi.de</div>
+      <a class="btn sm cal-abo" href="{{ "termine.ics" | relURL }}">Kalender abonnieren (.ics)</a>
+    </div>
+  </div>
+  <noscript><div class="wrap"><p class="note">Ohne JavaScript siehst du alle Termine in der <a href="{{ "termine/" | relURL }}">Terminliste</a>.</p></div></noscript>
+  <div class="bar">
+    <div class="wrap">
+      <div class="tabs" role="tablist" aria-label="Ansicht">
+        <button class="tab" role="tab" id="tab-entdecken" aria-controls="view-entdecken" data-tab="entdecken">Entdecken</button>
+        <button class="tab" role="tab" id="tab-programm" aria-controls="view-programm" data-tab="programm">Programm <span class="count" id="cnt-all">0</span></button>
+        <button class="tab" role="tab" id="tab-gemerkt" aria-controls="view-gemerkt" data-tab="gemerkt">Gemerkt <span class="count" id="cnt-saved">0</span></button>
+      </div>
+      <div class="filters" id="filters">
+        <div class="fgroup" role="group" aria-label="Veranstalter filtern">
+          <span class="flabel" aria-hidden="true">Von</span>
+          <button class="chip" data-f="group" data-v="all">Alle</button>
+          <button class="chip" data-f="group" data-v="ye" style="--c:var(--g-ye)"><span class="dot"></span>Hamburg · YE</button>
+          <button class="chip" data-f="group" data-v="yenet" style="--c:var(--g-yenet)"><span class="dot"></span>YE-Netzwerk</button>
+          <button class="chip" data-f="group" data-v="hh" style="--c:var(--g-hh)"><span class="dot"></span>VDI Hamburg &amp; Arbeitskreise</button>
+          <button class="chip" data-f="group" data-v="nord" style="--c:var(--g-nord)"><span class="dot"></span>Weitere Bezirksvereine</button>
+        </div>
+        <div class="frange">
+          <label class="flabel" for="radius">Wo</label>
+          <input type="range" id="radius" min="0" max="6" step="1" value="0">
+          <output id="radius-out" for="radius">Hamburg + 15 km</output>
+          <button class="chip" id="online-toggle" aria-pressed="true">Online-Termine</button>
+          <span class="rnote" id="radius-note" aria-live="polite"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap termine-main">
+    <section class="view" id="view-entdecken" role="tabpanel" aria-labelledby="tab-entdecken">
+      <div class="discover">
+        <div class="stackcol">
+          <div class="stack" id="stack"></div>
+          <p class="sr-only" id="sr-status" role="status"></p>
+          <div class="controls">
+            <button class="cbtn undo" id="btn-undo" aria-label="Letzte Entscheidung zurücknehmen" title="Zurück"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+            <button class="cbtn skip" id="btn-skip" aria-label="Weiter, nicht merken" title="Weiter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+            <button class="cbtn save" id="btn-save" aria-label="Merken" title="Merken"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 3 5 6.6 5c2.1 0 3.5 1.1 4.4 2.4h2C13.9 6.1 15.3 5 17.4 5 21 5 23.1 8.6 21.6 11.9 19.5 16.4 12 21 12 21z"/></svg></button>
+          </div>
+          <p class="hint"><span class="hint-touch">Rechts wischen merkt und führt dich zur Anmeldung, links wischen blättert weiter. Tippen öffnet die Details.</span><span class="hint-desk">Karte ziehen, mit zwei Fingern wischen oder die Pfeiltasten nutzen. Rechts merkt, links blättert weiter. Die Knöpfe darunter machen dasselbe.</span></p>
+        </div>
+        <aside class="vorschau" aria-labelledby="vorschau-h">
+          <h3 class="mini-h" id="vorschau-h">Als Nächstes</h3>
+          <ul class="rows" id="vorschau-liste"></ul>
+          <button type="button" class="btn" data-tab-go="programm">Ganzes Programm ansehen</button>
+        </aside>
+      </div>
+    </section>
+    <section class="view" id="view-programm" role="tabpanel" aria-labelledby="tab-programm" hidden>
+      <div id="list"></div>
+    </section>
+    <section class="view" id="view-gemerkt" role="tabpanel" aria-labelledby="tab-gemerkt" hidden>
+      <p class="sec-note">Gemerkt heißt noch nicht angemeldet. Die Anmeldung läuft über vdi.de. Danach kannst du den Termin hier abhaken. Die Merkliste bleibt nur in diesem Browser.</p>
+      <div class="toolbar" id="saved-tools">
+        <button class="btn" id="btn-copy-saved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/></svg>Merkliste als Text kopieren</button>
+      </div>
+      <div id="saved"></div>
+    </section>
+  </div>
+</section>
+
+<section class="sec alt" id="karte" aria-labelledby="karte-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2 class="sec-h" id="karte-h">Hier waren wir schon</h2>
+        <p class="sec-lede">Seit Januar 2025 jeden Monat ein anderer Ort. Blau: unsere Stammtische, orange: kommende Termine. Tipp auf einen Pin, zoomen mit zwei Fingern oder den Knöpfen.</p>
+      </div>
+    </div>
+    <div class="mapgrid">
+      <figure class="mapbox">
+        <svg id="map" viewBox="225 40 770 590" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Karte von Hamburg mit Stammtisch-Orten"></svg>
+        <div class="mpop" id="mpop" hidden></div>
+        <div class="zoomctl" role="group" aria-label="Karte zoomen">
+          <button type="button" id="zoom-in" aria-label="Hineinzoomen">+</button>
+          <button type="button" id="zoom-out" aria-label="Herauszoomen">−</button>
+          <button type="button" id="zoom-reset" aria-label="Ganze Karte zeigen" title="Ganze Karte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        </div>
+        <figcaption>Kartendaten © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap-Mitwirkende</a></figcaption>
+      </figure>
+      <div class="mappanel">
+        <details class="chronik-box">
+          <summary>Alle bisherigen Stammtische als Liste</summary>
+          <ol class="chronik-liste">
+            {{- range hugo.Data.stammtische }}
+            <li><button type="button" class="chronik-btn" data-pin-sel="{{ .id }}"><b>{{ .wann }}</b>: {{ .name }} <span>({{ .art }}, {{ .adresse }})</span></button></li>
+            {{- end }}
+          </ol>
+        </details>
+        <form class="suggest" id="suggest" novalidate>
+          <h3 class="mini-h">Bring dich ein</h3>
+          <p class="sug-note">Die Hamburger Young Engineers leben von euren Ideen. Ob neue Location, Exkursion zu deinem Arbeitgeber oder ein ganz eigenes Format: Schick es uns, wir helfen bei Organisation, Anmeldung über vdi.de und Werbung über unsere Kanäle.</p>
+          <div class="sug-types" role="radiogroup" aria-label="Was möchtest du uns schicken?">
+            <button type="button" class="chip" role="radio" data-sugtype="ort" aria-checked="true">Location-Tipp</button>
+            <button type="button" class="chip" role="radio" data-sugtype="event" aria-checked="false">Event-Idee</button>
+            <button type="button" class="chip" role="radio" data-sugtype="orga" aria-checked="false">Ich will mitorganisieren</button>
+          </div>
+          <div id="sug-name-wrap"><label for="sug-name" id="sug-name-l">Name der Location</label>
+          <input id="sug-name" type="text" autocomplete="off" placeholder="z. B. Bar oder Restaurant"></div>
+          <div id="sug-area-wrap"><label for="sug-area" id="sug-area-l">Stadtteil</label><input id="sug-area" type="text" autocomplete="off" placeholder="z. B. Ottensen"></div>
+          <label for="sug-why" id="sug-why-l">Warum dort?</label>
+          <textarea id="sug-why" rows="2" placeholder="Gutes Essen, große Tische, Happy Hour …"></textarea>
+          <label class="sug-help" for="sug-help"><input type="checkbox" id="sug-help"> Ich helfe bei der Umsetzung mit</label>
+          <a class="btn primary sug-send" id="sug-send" href="#" target="_blank" rel="noopener" aria-disabled="true">Per WhatsApp an {{ $k.whatsappName }} senden{{ $neu }}</a>
+          <p class="sug-hint" id="sug-hint" aria-live="polite">Gib zuerst einen Namen ein.</p>
+          <p class="sug-ideas" id="sug-ideas" hidden>Ideen, die gut ankommen: Exkursion zu deinem Arbeitgeber, Werks- oder Laborführung, Vortrag aus deinem Fachgebiet, Bewerbungs- oder Gehalts-Workshop, Spiele- oder Quizabend, Sport wie Bouldern oder Kicker.</p>
+          <p class="sug-datenschutz">Die Nachricht wird erst in WhatsApp gesendet, wenn du dort auf Senden tippst. Diese Website speichert nichts davon. <a href="{{ "datenschutz/" | relURL }}#whatsapp">Hinweise zu WhatsApp</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="mitmachen" aria-labelledby="mitmachen-h">
+  <div class="wrap">
+    <div class="sec-head"><div><h2 class="sec-h" id="mitmachen-h">So bist du dabei</h2></div></div>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-n" aria-hidden="true">1</span>
+        <h3>WhatsApp-Community</h3>
+        <p>Hier bleibst du immer auf dem aktuellen Stand und verpasst kein Event mehr.</p>
+        <a class="step-link" href="#kontakt" data-wa="community" aria-haspopup="dialog">Community beitreten</a>
+      </li>
+      <li class="step">
+        <span class="step-n" aria-hidden="true">2</span>
+        <h3>Zum Stammtisch kommen</h3>
+        <p>{{ .Params.stammtisch }}</p>
+        <a class="step-link" href="#start">Nächster Termin</a>
+      </li>
+      <li class="step">
+        <span class="step-n" aria-hidden="true">3</span>
+        <h3>Eindrücke auf Instagram</h3>
+        <p>Fotos von Stammtischen, Exkursionen und Messen. Folg uns und markier uns gern, wenn du bei einem VDI-Event dabei bist.</p>
+        <a class="step-link" href="{{ $k.instagram }}" target="_blank" rel="noopener">{{ $k.instagramName }}{{ $neu }}</a>
+      </li>
+      <li class="step step-member">
+        <span class="step-n" aria-hidden="true">4</span>
+        <h3>VDI-Mitglied werden</h3>
+        <p>Exklusive Events, Coaching und das bundesweite Netzwerk. <b>Frag uns vorher nach einem Rabattcode:</b> Wir haben oft Codes für eine vergünstigte Mitgliedschaft.</p>
+        <a class="btn blue sm" href="#kontakt" data-wa="rabatt" aria-haspopup="dialog">Rabattcode per WhatsApp anfragen</a>
+        <p class="mail-klein">oder per E-Mail: <a href="mailto:{{ $k.email }}?subject={{ "Rabattcode VDI-Mitgliedschaft" | urlquery }}">{{ $k.email }}</a></p>
+        <a class="step-link" href="{{ $k.mitgliedschaft }}" target="_blank" rel="noopener">Mitgliedschaft ansehen{{ $neu }}</a>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec alt" id="vdi" aria-labelledby="vdi-h">
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <h2 class="sec-h" id="vdi-h">Mehr vom VDI</h2>
+      <p class="sec-lede">Angebote für den Start ins Berufsleben und Treffen über Hamburg hinaus.</p>
+    </div></div>
+    {{- $monate := slice "Jan." "Feb." "März" "Apr." "Mai" "Juni" "Juli" "Aug." "Sept." "Okt." "Nov." "Dez." }}
+    <div class="mehr">
+      <div class="mehr-angebote">
+        <h3 class="mehr-h" id="angebote-h">Angebote für deinen Start</h3>
+        <ul class="angebote" role="list" aria-labelledby="angebote-h">
+          {{- range hugo.Data.angebote }}
+          <li><a href="{{ .url }}" rel="noopener"><b>{{ .titel }}</b><span>{{ .text }}</span></a></li>
+          {{- end }}
+        </ul>
+      </div>
+      {{- with hugo.Data.ueberregional }}
+      {{- $treffen := . }}
+      <div class="raus">
+        <h3 class="mehr-h" id="raus-h">Raus aus Hamburg</h3>
+        <p class="raus-intro">Wir fahren gemeinsam zu überregionalen Treffen. Der Bezirksverein unterstützt die Teilnahme oft finanziell, etwa bei Fahrt oder Teilnahmegebühr; Voraussetzung ist meist die Mitgliedschaft. Frag beim Stammtisch, wer mitfährt.</p>
+        <ul class="formate" role="list" aria-labelledby="raus-h">
+          {{- range hugo.Data.formate }}
+          {{- $f := . }}
+          {{- $dabei := where $treffen "format" $f.id }}
+          <li class="format">
+            <div class="format-kopf">
+              <h4 class="format-name">{{ $f.name }}</h4>
+              <p class="format-text">{{ $f.text }}</p>
+            </div>
+            {{- with $dabei }}
+            <ul class="format-liste" role="list" aria-label="Auszug: {{ $f.name }}, bei denen wir dabei waren">
+              {{- range first 3 . }}
+              {{- $teile := split .datum "-" }}
+              {{- $recht := .bildrecht }}{{ $video := .video }}{{ $url := .url }}
+              <li>
+                {{- with .bild }}{{ with resources.Get (printf "rueckblick/%s" .) }}{{ $b := .Fill "240x160 webp q72" }}
+                {{- if $video }}
+                <a class="bild-rahmen video-link" href="{{ $video }}" rel="noopener"><img src="{{ $b.RelPermalink }}" width="{{ $b.Width }}" height="{{ $b.Height }}" alt="" loading="lazy" decoding="async"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Video</span><span class="sr-only">Video der Konferenz auf YouTube ansehen</span>{{ with $recht }}<span class="bildrecht" title="{{ . }}">{{ . }}</span>{{ end }}</a>
+                {{- else }}
+                <span class="bild-rahmen"><img src="{{ $b.RelPermalink }}" width="{{ $b.Width }}" height="{{ $b.Height }}" alt="" loading="lazy" decoding="async">{{ with $recht }}<span class="bildrecht" title="{{ . }}">{{ . }}</span>{{ end }}</span>
+                {{- end }}
+                {{- end }}{{ else }}
+                <span class="format-platzhalter" aria-hidden="true"><svg viewBox="0 0 32 32" focusable="false"><path d="M12 2h18v18h-6V8H12z"/><path d="M2 12h18v18h-6V18H2z"/></svg></span>
+                {{- end }}
+                <span class="format-wo">{{ with $url }}<a href="{{ . }}" rel="noopener">{{ end }}{{ .art | default (.ort | default .titel) }}{{ with $url }}</a>{{ end }}</span>
+                <span class="format-wann">{{ if .art }}{{ with .ort }}{{ . }}, {{ end }}{{ end }}{{ if eq (len $teile) 2 }}{{ index $monate (sub (int (strings.TrimLeft "0" (index $teile 1))) 1) }} {{ end }}{{ index $teile 0 }}</span>
+              </li>
+              {{- end }}
+              <li class="format-mehr" aria-label="und weitere Treffen"><span aria-hidden="true">…</span><span aria-hidden="true">und mehr</span></li>
+            </ul>
+            {{- end }}
+          </li>
+          {{- end }}
+        </ul>
+      </div>
+      {{- end }}
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="kontakt" aria-labelledby="kontakt-h">
+  <div class="wrap">
+    <div class="sec-head"><div>
+      <h2 class="sec-h" id="kontakt-h">Fragen? Schreib uns.</h2>
+      <p class="sec-lede">Das Leitungsteam von VDI Hamburg – Young Engineers.</p>
+    </div></div>
+    <div class="contact">
+      <div class="people">
+        {{- range $k.leitungsteam }}
+        {{- $bild := (resources.Get .foto).Fill "224x224 webp q80" }}
+        <div class="person"><span class="bild-rahmen rund"><img class="avatar" src="{{ $bild.RelPermalink }}" alt="Porträt {{ .name }}" width="112" height="112" loading="lazy">{{ with .bildrecht }}<span class="bildrecht">{{ . }}</span>{{ end }}</span><div><b>{{ .name }}</b><span>{{ .rolle }}</span></div></div>
+        {{- end }}
+      </div>
+      <div class="cways">
+        <div class="cway cway-haupt"><span class="clabel">Am schnellsten</span><span class="cval">Schreib uns auf WhatsApp</span><a class="btn blue" href="#c-mail" data-wa="chat" aria-haspopup="dialog">WhatsApp-Chat öffnen</a></div>
+        <div class="cway"><span class="clabel">E-Mail</span><a class="cval" id="c-mail" href="mailto:{{ $k.email }}">{{ $k.email }}</a><button class="btn sm" id="copy-mail" type="button">Kopieren</button></div>
+        <div class="cway"><span class="clabel">Auf vdi.de</span><span class="cval">VDI Hamburg – Young Engineers</span><a class="btn sm" href="{{ $k.vdiSeite }}" target="_blank" rel="noopener">Seite öffnen{{ $neu }}</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="detail" role="dialog" aria-modal="true" aria-labelledby="d-title" id="detail"></div>
+</div>
+<div class="overlay" id="match-overlay" hidden>
+  <div class="match" role="dialog" aria-modal="true" aria-labelledby="m-title" id="match"></div>
+</div>
+<div class="overlay" id="quiz-overlay" hidden>
+  <div class="match quiz" role="dialog" aria-modal="true" aria-labelledby="q-title" id="quiz"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+{{ end }}
+
+{{ define "skripte" }}
+{{ partial "daten.html" . }}
+{{- $js := slice (resources.Get "js/karte-geometrie.js") (resources.Get "js/app.js") | resources.Concat "js/ye.js" | minify | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{ end }}

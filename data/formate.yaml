@@ -1,0 +1,17 @@
+# Arten überregionaler Treffen für „Raus aus Hamburg“ (Reihenfolge = Anzeige).
+# Die Treffen selbst stehen in data/ueberregional.yaml (Feld format). Angezeigt wird ein Auszug.
+- id: kongress
+  name: Young Engineers Kongress & Day, Deutscher Ingenieurtag (DIT)
+  text: Jährlich bundesweit – alle zwei Jahre als Young Engineers Day beim Deutschen Ingenieurtag, dazwischen als eigener Kongress.
+- id: eye
+  name: EYE-Konferenz
+  text: European Young Engineers – junge Ingenieurinnen und Ingenieure aus ganz Europa, zweimal im Jahr in einer anderen Stadt.
+- id: netzwerk
+  name: Bundesweite Treffen
+  text: Netzwerk- und Aktiventreffen, Messebesuche und Begegnungen mit Young Engineers aus anderen Regionen und Ländern.
+- id: yp
+  name: Young Professionals Networking-Wochenende & Summit
+  text: Netzwerken für die ersten Berufsjahre, jedes Jahr in einer anderen Stadt.
+- id: regional
+  name: Regionalrunden
+  text: Wochenenden mit Exkursionen und Workshops in den Regionen Nord, Nordwest und Nordost – meist gut mit der Bahn erreichbar.

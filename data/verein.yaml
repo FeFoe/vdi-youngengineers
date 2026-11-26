@@ -1,0 +1,23 @@
+# Angaben für Impressum und Datenschutzerklärung.
+# Quelle: Impressum des Bezirksvereins auf vdi.de (abgerufen am 26.11.2026):
+# https://www.vdi.de/netzwerke-community/bezirksvereine/hamburger-bezirksverein-ev/impressum
+# Bei Vorstandswechsel hier anpassen.
+name: VDI Hamburger Bezirksverein e. V.
+strasse: Stadtbahnstr. 114
+plz: "22391"
+ort: Hamburg
+telefon: "+49 40 61136047-0"
+telefax: "+49 40 61136047-29"
+email: bvhamburg@vdi.de
+register: Vereinsregister Hamburg, VR 1120
+vorstand:
+  - Prof. Dr.-Ing. Nikola Bursac (Vorsitzender)
+  - Dr. rer. nat. Annette Eckhardt (stellv. Vorsitzende)
+  - Dipl.-Ing. Axel Dreckschmidt (Schatzmeister)
+impressumQuelle: https://www.vdi.de/netzwerke-community/bezirksvereine/hamburger-bezirksverein-ev/impressum
+
+# Datenschutzbeauftragte*r (beim Bezirksverein erfragen und eintragen; leer = Absatz entfällt)
+datenschutzbeauftragter: ""
+
+# Hosting für die Datenschutzerklärung
+hosting: "einem Server in Deutschland, den ein ehrenamtlich tätiges Vereinsmitglied im Auftrag des Bezirksvereins betreibt"
