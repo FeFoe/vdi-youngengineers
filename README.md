@@ -16,6 +16,7 @@ Website der Young Engineers im VDI Hamburger Bezirksverein e. V. – das Netzwer
 - **Termine entdecken** – Karten zum Wischen, Programm mit Filtern nach Veranstalter und Umkreis, Merkliste im Browser, Kalenderdatei je Termin.
 - **Stammtisch-Karte** – alle bisherigen Orte auf einer eigenen Hamburg-Karte, verknüpft mit dem Fotostreifen.
 - **Raus aus Hamburg** – Rückblick auf Kongress & DIT, EYE-Konferenzen, Regionalrunden und mehr.
+- **Linkseite `/links/`** – Ersatz für Linktree in der Instagram-Bio: nächster Stammtisch und Termine in Hamburg aktualisieren sich automatisch, dazu WhatsApp, Instagram und feste Links.
 - **WhatsApp ohne Spam** – Nummer und Community-Link stehen nie im Klartext im HTML oder im Repo. Erst nach einer kurzen Frage („Wofür steht das ‚V‘ in VDI?“) und einer unsichtbaren [ALTCHA](https://altcha.org)-Rechenaufgabe werden sie im Browser entschlüsselt.
 
 ## Grundsätze
@@ -51,6 +52,7 @@ Ohne die erzeugten Dateien baut die Seite trotzdem – dann ohne vdi.de-Termine 
 | Termine von vdi.de korrigieren oder ausblenden | [`data/termine_anpassungen.yaml`](data/termine_anpassungen.yaml) |
 | Eigener Termin, der nicht auf vdi.de steht | neue Datei in `content/termine/` (Vorlage unten) |
 | VDI-Angebote | [`data/angebote.yaml`](data/angebote.yaml) |
+| Feste Links der Linkseite `/links/` (Instagram-Bio) | [`data/links.yaml`](data/links.yaml) – Termine dort kommen automatisch |
 | Rückblick „Raus aus Hamburg“ | [`data/formate.yaml`](data/formate.yaml), [`data/ueberregional.yaml`](data/ueberregional.yaml), Fotos in `assets/rueckblick/` |
 | Impressum-Angaben, Vorstand | [`data/verein.yaml`](data/verein.yaml) |
 | Quellen des Termin-Scrapers | [`tools/vdi_termine.toml`](tools/vdi_termine.toml) |

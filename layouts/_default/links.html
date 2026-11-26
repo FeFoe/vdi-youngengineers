@@ -1,0 +1,120 @@
+{{- /* Linkseite /links/ für die Instagram-Bio (Ersatz für Linktree).
+       Eigenständige Seite ohne Kopf und Navigation; Termine kommen automatisch aus partials/termine.html,
+       feste Links aus data/links.yaml. */ -}}
+{{- $k := hugo.Data.kontakt -}}
+{{- $v := hugo.Data.verein -}}
+{{- $tage := slice "So." "Mo." "Di." "Mi." "Do." "Fr." "Sa." -}}
+{{- $monate := slice "Jan." "Feb." "März" "Apr." "Mai" "Juni" "Juli" "Aug." "Sept." "Okt." "Nov." "Dez." -}}
+{{- $neu := `<span class="sr-only"> (öffnet neues Fenster)</span>` | safeHTML -}}
+{{- $termine := partial "termine.html" . -}}
+{{- $ye := where $termine "group" "ye" -}}
+{{- $naechster := dict -}}
+{{- with $ye }}{{ $naechster = index . 0 }}{{ end -}}
+{{- $weitere := slice -}}
+{{- range $termine -}}
+  {{- /* Präsenztermine bis etwa 30 km um Hamburg sowie YE-Termine und Tipps, keine Online-Termine */ -}}
+  {{- $nah := false -}}
+  {{- with .geo }}{{ $dy := mul (sub (index . 0) 53.55) 111 }}{{ $dx := mul (sub (index . 1) 9.99) 66 }}{{ $nah = le (add (mul $dx $dx) (mul $dy $dy)) 900 }}{{ end -}}
+  {{- if and (or $nah (in (slice "ye" "yenet") .group) .tipp) (ne .id (index $naechster "id" | default "")) (not .geplant) (ne .mode "online") -}}
+    {{- if lt (len $weitere) 3 }}{{ $weitere = $weitere | append . }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- $ICONS := dict
+    "termine" `<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M7 14h4M7 17h7"/>`
+    "kalender" `<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/>`
+    "vdi" `<path d="M4 4h16v16H4z"/><path d="M8 9l2 6 2-6M14 9v6"/>`
+    "mitglied" `<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/>`
+    "idee" `<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.9.7 1.5 1.7 1.5 2.6V17h4v-.5c0-.9.6-1.9 1.5-2.6A6 6 0 0 0 12 3z"/>`
+    "mail" `<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>`
+    "web" `<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/>`
+-}}
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Links · Young Engineers Hamburg</title>
+<meta name="description" content="{{ .Description }}">
+<link rel="canonical" href="{{ .Permalink }}">
+<link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
+<meta name="theme-color" content="#003DA4">
+{{- if eq (getenv "HUGO_VORSCHAU") "1" }}
+<meta name="robots" content="noindex, nofollow">
+{{- end }}
+{{ partial "seo.html" . }}
+<link rel="preload" href="{{ "fonts/NunitoSans-Regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ "fonts/Rajdhani-Bold.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+{{- $css := slice (resources.Get "css/schriften.css") (resources.Get "css/seite.css") (resources.Get "css/ergaenzungen.css") (resources.Get "css/links.css") | resources.Concat "css/ye-links.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+</head>
+<body class="links-seite">
+{{ partial "logo-symbol.html" . }}
+<main class="lk">
+  <header class="lk-kopf">
+    <svg class="lk-signet-bg" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M12 2h18v18h-6V8H12z"/><path d="M2 12h18v18h-6V18H2z"/></svg>
+    <a class="lk-logo" href="{{ "/" | relURL }}" aria-label="Zur Website der Young Engineers Hamburg">
+      <svg viewBox="0 0 982 614" role="img" aria-label="VDI"><use href="#vdi-logo"/></svg>
+    </a>
+    <h1 class="lk-titel"><span>Hamburger Bezirksverein e. V.</span>Young Engineers</h1>
+    <p class="lk-bio">Stammtische, Exkursionen und Netzwerk für Studierende und junge Ingenieur*innen in Hamburg</p>
+    <div class="lk-social">
+      <a href="{{ $k.instagram }}" rel="noopener" aria-label="Instagram {{ $k.instagramName }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle class="voll" cx="17.4" cy="6.6" r="1.1"/></svg></a>
+      <a href="mailto:{{ $k.email }}" aria-label="E-Mail an {{ $k.email }}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{{ index $ICONS "mail" | safeHTML }}</svg></a>
+      <a href="{{ "/" | relURL }}" aria-label="Website"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{{ index $ICONS "web" | safeHTML }}</svg></a>
+    </div>
+  </header>
+
+  {{- with $naechster }}
+  <section class="lk-next" aria-labelledby="lk-next-h">
+    <p class="lk-kicker" id="lk-next-h">{{ if .geplant }}Nächster Stammtisch (geplant){{ else }}Nächster Stammtisch{{ end }}</p>
+    <p class="lk-next-titel">{{ .title }}</p>
+    <p class="lk-next-meta">{{ partial "links-datum.html" (dict "e" . "tage" $tage "monate" $monate) }}<br>{{ .place }}{{ with .address }}{{ if ne . "Hamburg" }}, {{ . }}{{ end }}{{ end }}</p>
+    {{- if .noreg }}
+    <p class="lk-next-hinweis">Ort und Anmeldung kündigen wir zuerst in der WhatsApp-Community an.</p>
+    {{- else }}
+    <a class="btn primary lk-voll" href="{{ .url }}" rel="noopener">Jetzt auf vdi.de anmelden</a>
+    {{- end }}
+  </section>
+  {{- end }}
+
+  <nav class="lk-liste" aria-label="Links">
+    <a class="lk-btn lk-wa" href="{{ "/" | relURL }}#whatsapp">
+      <span class="lk-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg></span>
+      <span class="lk-txt"><b>WhatsApp-Community beitreten</b><span>Kein Event mehr verpassen</span></span>
+    </a>
+    <a class="lk-btn lk-insta" href="{{ $k.instagram }}" rel="noopener">
+      <span class="lk-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle class="voll" cx="17.4" cy="6.6" r="1.1"/></svg></span>
+      <span class="lk-txt"><b>Instagram</b><span>{{ $k.instagramName }}</span></span>
+    </a>
+
+    {{- with $weitere }}
+    <h2 class="lk-h">Demnächst</h2>
+    {{- range . }}
+    <a class="lk-btn lk-termin" href="{{ .url }}" rel="noopener">
+      {{- $s := time.AsTime .start }}
+      <span class="lk-datum" aria-hidden="true"><b>{{ $s.Day }}</b>{{ index $monate (sub (int $s.Month) 1) }}</span>
+      <span class="lk-txt"><b>{{ .title }}</b><span>{{ partial "links-datum.html" (dict "e" . "tage" $tage "monate" $monate) }} · {{ .place }}</span></span>
+    </a>
+    {{- end }}
+    {{- end }}
+
+    <h2 class="lk-h">Mehr</h2>
+    {{- range hugo.Data.links }}
+    {{- $extern := hasPrefix .url "http" }}
+    <a class="lk-btn" href="{{ if $extern }}{{ .url }}{{ else }}{{ .url | relURL }}{{ end }}"{{ if $extern }} rel="noopener"{{ end }}>
+      <span class="lk-ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{{ index $ICONS .icon | default (index $ICONS "web") | safeHTML }}</svg></span>
+      <span class="lk-txt"><b>{{ .titel }}</b>{{ with .text }}<span>{{ . }}</span>{{ end }}</span>
+    </a>
+    {{- end }}
+  </nav>
+
+  <a class="btn blue lk-voll lk-web" href="{{ "/" | relURL }}">Zur ganzen Website<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+
+  <footer class="lk-fuss">
+    <a href="{{ "impressum/" | relURL }}">Impressum</a>
+    <a href="{{ "datenschutz/" | relURL }}">Datenschutz</a>
+    <span>© {{ now.Year }} {{ $v.name }}</span>
+  </footer>
+</main>
+</body>
+</html>

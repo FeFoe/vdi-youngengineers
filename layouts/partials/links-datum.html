@@ -1,0 +1,3 @@
+{{- /* Datum eines Termins kurz auf Deutsch, z. B. „Di. 29. Dez., 18:30 Uhr“ (für layouts/_default/links.html) */ -}}
+{{- $s := time.AsTime .e.start -}}
+{{- index .tage (int $s.Weekday) }} {{ $s.Day }}. {{ index .monate (sub (int $s.Month) 1) }}{{ if not .e.allday }}, {{ $s.Format "15:04" }} Uhr{{ end -}}

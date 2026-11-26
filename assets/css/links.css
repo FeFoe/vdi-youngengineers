@@ -1,0 +1,45 @@
+/* Linkseite /links/ (Instagram-Bio): eine Spalte, große Tippflächen, VDI-Blau als Kopf */
+.links-seite{background:var(--accent);min-height:100svh}
+.links-seite::before{background:var(--accent)}
+.lk{max-width:520px;margin:0 auto;padding:max(28px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.lk-kopf{position:relative;text-align:center;color:#fff;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.lk-signet-bg{position:absolute;top:-70px;right:-90px;width:220px;height:220px;fill:#9DD0F4;opacity:.16;pointer-events:none}
+.lk-logo{--logo-blau:#003DA4;display:grid;place-items:center;width:88px;height:88px;border-radius:50%;background:#fff;box-shadow:0 4px 18px rgba(0,12,25,.25)}
+.lk-logo svg{width:58px;height:auto;aspect-ratio:982/614}
+.lk-titel{font-family:var(--f-display);font-weight:700;font-size:32px;line-height:1.05;color:#fff;margin:4px 0 0}
+.lk-titel span{display:block;font-family:var(--f-body);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9DD0F4;margin-bottom:4px}
+.lk-bio{margin:0;max-width:36ch;font-size:15px;line-height:1.45;color:#E4EEFB}
+.lk-social{display:flex;gap:10px;margin-top:2px}
+.lk-social a{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;color:#fff;border:1px solid rgba(255,255,255,.35)}
+.lk-social a:hover{background:rgba(255,255,255,.12)}
+.lk-social svg,.lk-ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lk-social svg .voll,.lk-ico svg .voll{fill:currentColor;stroke:none}
+
+.lk-next{background:#fff;border-radius:14px;padding:18px 18px 16px;box-shadow:0 6px 24px rgba(0,12,25,.22);display:flex;flex-direction:column;gap:6px}
+.lk-kicker{margin:0;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lk-next-titel{margin:0;font-family:var(--f-display);font-weight:700;font-size:24px;line-height:1.12;text-wrap:balance}
+.lk-next-meta{margin:0;color:var(--muted);font-size:15px;line-height:1.45}
+.lk-next-hinweis{margin:4px 0 0;font-size:14px;color:var(--muted)}
+.lk-voll{width:100%;margin-top:6px;padding:13px 16px;font-size:16px;border-radius:10px}
+
+.lk-liste{display:flex;flex-direction:column;gap:10px}
+.lk-h{margin:12px 0 0;font-family:var(--f-body);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#9DD0F4}
+.lk-btn{display:flex;align-items:center;gap:14px;min-height:62px;padding:10px 16px 10px 10px;border-radius:12px;background:#fff;color:var(--ink);text-decoration:none;box-shadow:0 2px 8px rgba(0,12,25,.16);transition:transform .12s ease,box-shadow .12s ease}
+.lk-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,12,25,.24)}
+.lk-btn:active{transform:scale(.985)}
+.lk-btn:focus-visible,.lk-social a:focus-visible,.lk-voll:focus-visible,.lk-logo:focus-visible,.lk-fuss a:focus-visible{outline:3px solid #9DD0F4;outline-offset:3px}
+.lk-ico{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:10px;background:var(--accent-soft);color:var(--accent)}
+.lk-txt{display:flex;flex-direction:column;min-width:0;gap:1px}
+.lk-txt b{font-size:16px;line-height:1.25}
+.lk-txt span{font-size:13.5px;line-height:1.35;color:var(--muted)}
+.lk-wa .lk-ico{background:#E3F3EA;color:var(--save)}
+.lk-insta .lk-ico{background:#FCE8EE;color:#B0275B}
+.lk-datum{flex:none;width:42px;height:46px;border-radius:10px;background:var(--accent);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:700;line-height:1.1}
+.lk-datum b{font-family:var(--f-display);font-size:21px;line-height:1}
+.lk-termin .lk-txt b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+.lk-web{margin-top:10px;background:#fff;border-color:#fff;color:var(--accent)}
+.lk-web:hover{filter:none;background:var(--accent-soft)}
+.lk-fuss{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;margin-top:10px;font-size:13px;color:#C9DAF3}
+.lk-fuss a{color:#fff}
+@media (prefers-reduced-motion:reduce){.lk-btn{transition:none}.lk-btn:hover{transform:none}}

@@ -1,0 +1,28 @@
+# Linkseite /links/ (Ersatz für Linktree, Link für die Instagram-Bio).
+# Die Termine oben (nächster Stammtisch, weitere YE-Termine) kommen automatisch aus den Terminen der Website.
+# Hier nur die festen Links pflegen; Reihenfolge = Reihenfolge auf der Seite.
+# icon: termine, kalender, vdi, mitglied, idee, mail, web
+- titel: Alle Termine der Young Engineers
+  text: Programm mit Filtern, Merkliste und Karte
+  url: /#termine
+  icon: termine
+- titel: Veranstaltungen auf vdi.de
+  text: Anmeldung beim VDI Hamburger Bezirksverein
+  url: https://www.vdi.de/netzwerke-community/bezirksvereine/hamburger-bezirksverein-ev/veranstaltungen?tx_sfeventmgt_pieventsearch%5BoverwriteDemand%5D%5BworkingGroups%5D%5B%5D=7099#veranstaltungen
+  icon: vdi
+- titel: Kalender abonnieren
+  text: Alle Termine automatisch in deinem Kalender
+  url: /termine.ics
+  icon: kalender
+- titel: VDI-Mitglied werden
+  text: Frag uns vorher nach einem Rabattcode
+  url: /#mitmachen
+  icon: mitglied
+- titel: Idee oder Location vorschlagen
+  text: Stammtisch-Ort, Exkursion oder eigenes Format
+  url: /#karte
+  icon: idee
+- titel: Young Engineers Hamburg auf vdi.de
+  text: Unsere Seite beim VDI
+  url: https://www.vdi.de/netzwerke-community/bezirksvereine/hamburger-bezirksverein-ev/netzwerke-aktivitaeten/young-engineers
+  icon: web

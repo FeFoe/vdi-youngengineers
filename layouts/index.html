@@ -108,7 +108,7 @@
     <div class="sec-head">
       <div>
         <h2 class="sec-h" id="karte-h">Hier waren wir schon</h2>
-        <p class="sec-lede">Seit Januar 2025 jeden Monat ein anderer Ort. Blau: unsere Stammtische, orange: kommende Termine. Tipp auf einen Pin, zoomen mit zwei Fingern oder den Knöpfen.</p>
+        <p class="sec-lede">Seit Januar 2025 jeden Monat ein anderer Ort. Blau: unsere Stammtische, orange: kommende Termine. Tipp auf einen Pin, zoomen und verschieben mit zwei Fingern oder den Knöpfen.</p>
       </div>
     </div>
     <div class="mapgrid">
@@ -228,6 +228,8 @@
                 {{- with .bild }}{{ with resources.Get (printf "rueckblick/%s" .) }}{{ $b := .Fill "240x160 webp q72" }}
                 {{- if $video }}
                 <a class="bild-rahmen video-link" href="{{ $video }}" rel="noopener"><img src="{{ $b.RelPermalink }}" width="{{ $b.Width }}" height="{{ $b.Height }}" alt="" loading="lazy" decoding="async"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Video</span><span class="sr-only">Video der Konferenz auf YouTube ansehen</span>{{ with $recht }}<span class="bildrecht" title="{{ . }}">{{ . }}</span>{{ end }}</a>
+                {{- else if $url }}
+                <a class="bild-rahmen bild-link" href="{{ $url }}" rel="noopener" tabindex="-1" aria-hidden="true"><img src="{{ $b.RelPermalink }}" width="{{ $b.Width }}" height="{{ $b.Height }}" alt="" loading="lazy" decoding="async">{{ with $recht }}<span class="bildrecht" title="{{ . }}">{{ . }}</span>{{ end }}</a>
                 {{- else }}
                 <span class="bild-rahmen"><img src="{{ $b.RelPermalink }}" width="{{ $b.Width }}" height="{{ $b.Height }}" alt="" loading="lazy" decoding="async">{{ with $recht }}<span class="bildrecht" title="{{ . }}">{{ . }}</span>{{ end }}</span>
                 {{- end }}
@@ -238,7 +240,6 @@
                 <span class="format-wann">{{ if .art }}{{ with .ort }}{{ . }}, {{ end }}{{ end }}{{ if eq (len $teile) 2 }}{{ index $monate (sub (int (strings.TrimLeft "0" (index $teile 1))) 1) }} {{ end }}{{ index $teile 0 }}</span>
               </li>
               {{- end }}
-              <li class="format-mehr" aria-label="und weitere Treffen"><span aria-hidden="true">…</span><span aria-hidden="true">und mehr</span></li>
             </ul>
             {{- end }}
           </li>

@@ -139,8 +139,8 @@ function sfHtml(e){
     '<div><dt>Datum</dt><dd>'+esc(dateLabel(e))+'</dd></div>'+
     '<div><dt>Zeit</dt><dd>'+esc(timeLabel(e))+'</dd></div>'+
     '<div class="wide"><dt>Ort</dt><dd>'+esc(e.place)+(e.address?'<br><span style="font-weight:500;color:var(--muted)">'+esc(e.address)+'</span>':'')+'</dd></div>'+
-    '<div class="wide"><dt>Veranstalter</dt><dd>'+esc(e.org)+'</dd></div>'+
-    '<div class="wide"><dt>Anmeldung</dt><dd class="reg-'+(reg(e).open?'open':'closed')+'">'+esc(reg(e).text)+(e.spots&&reg(e).open?'<br><span>'+esc(e.spots)+'</span>':'')+'</dd></div>'+
+    '<div class="wide sf-org"><dt>Veranstalter</dt><dd>'+esc(e.org)+'</dd></div>'+
+    '<div class="wide'+(reg(e).open&&!reg(e).deadline&&!e.spots?' sf-reg-plain':'')+'"><dt>Anmeldung</dt><dd class="reg-'+(reg(e).open?'open':'closed')+'">'+esc(reg(e).text)+(e.spots&&reg(e).open?'<br><span>'+esc(e.spots)+'</span>':'')+'</dd></div>'+
   '</dl>';
 }
 function toast(msg){
@@ -266,7 +266,23 @@ function renderDeck(){
       '</article>';
     }).join('');
     const top=st.querySelector('.sheetcard:not([aria-hidden])'); if(top) bindDrag(top);
+    st.style.height='';
+    st.querySelectorAll('.sheetcard').forEach(fitCard);
   }
+}
+/* Karte an die Stapelhöhe anpassen: erst Kurzbeschreibung kürzen, dann unwichtige Zeilen ausblenden,
+   zuletzt den Stapel vergrößern. Der Titel wird nie abgeschnitten. */
+function fitCard(card){
+  const body=card.querySelector('.sc-body'), text=card.querySelector('.sc-text'); if(!body||!body.clientHeight) return;
+  const voll=()=>body.scrollHeight<=body.clientHeight+1;
+  const schritte=[
+    ()=>text.style.webkitLineClamp='3', ()=>text.style.webkitLineClamp='2',
+    ()=>{ const r=card.querySelector('.sf-reg-plain'); if(r) r.hidden=true; },
+    ()=>{ const o=card.querySelector('.sf-org'); if(o) o.hidden=true; },
+    ()=>text.style.webkitLineClamp='1', ()=>text.hidden=true
+  ];
+  for (const s of schritte){ if(voll()) return; s(); }
+  if (!voll()){ const st=card.parentElement; st.style.height=(st.offsetHeight+body.scrollHeight-body.clientHeight+2)+'px'; }
 }
 /* Vorschau neben dem Kartenstapel (nur breite Bildschirme, per CSS) */
 function renderVorschau(){ const el=document.getElementById('vorschau-liste'); if(!el) return; const l=filtered().slice(0,5);
@@ -557,18 +573,32 @@ function placePop(){
   const svg=document.getElementById('map');
   svg.addEventListener('wheel',ev=>{ if(!ev.ctrlKey && mapZoom()<=1.01) return; ev.preventDefault();
     const [cx,cy]=toMap(ev.clientX,ev.clientY); zoomAt(Math.exp(-ev.deltaY*(ev.ctrlKey?0.012:0.002)),cx,cy); },{passive:false});
-  const pts=new Map(); let last=null, moved=0, pinch=null;
-  svg.addEventListener('pointerdown',ev=>{ pts.set(ev.pointerId,{x:ev.clientX,y:ev.clientY}); moved=0;
-    if(pts.size===2){ const [a,b]=[...pts.values()]; pinch={d:Math.hypot(a.x-b.x,a.y-b.y)}; }
-    else last={x:ev.clientX,y:ev.clientY}; });
-  svg.addEventListener('pointermove',ev=>{ if(!pts.has(ev.pointerId)) return; pts.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});
-    if(pts.size===2&&pinch){ const [a,b]=[...pts.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); const [cx,cy]=toMap((a.x+b.x)/2,(a.y+b.y)/2); zoomAt(d/pinch.d,cx,cy); pinch.d=d; moved+=10; return; }
-    const hOnly = false;
-    if(last){ const b=svg.getBoundingClientRect(); const dx=ev.clientX-last.x, dy=ev.clientY-last.y; moved+=Math.abs(dx)+Math.abs(dy);
-      if(moved>4){ try{svg.setPointerCapture(ev.pointerId);}catch(_){} svg.classList.add('panning'); }
-      const k=svg.getScreenCTM().a; VB.x-=dx/k; if(!hOnly) VB.y-=dy/k; last={x:ev.clientX,y:ev.clientY}; applyVB(); } });
-  const end=ev=>{ pts.delete(ev.pointerId); if(pts.size<2) pinch=null; if(!pts.size){ last=null; svg.classList.remove('panning'); } };
-  svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end);
+  let moved=0;
+  const verschieben=(dx,dy)=>{ const m=svg.getScreenCTM(); if(!m) return; VB.x-=dx/m.a; VB.y-=dy/m.a; applyVB(); };
+  /* Maus und Stift: Ziehen verschiebt die Karte */
+  let maus=null;
+  svg.addEventListener('pointerdown',ev=>{ if(ev.pointerType==='touch'||ev.button>0) return; maus={x:ev.clientX,y:ev.clientY,id:ev.pointerId}; moved=0; });
+  svg.addEventListener('pointermove',ev=>{ if(!maus||ev.pointerId!==maus.id) return;
+    const dx=ev.clientX-maus.x, dy=ev.clientY-maus.y; moved+=Math.abs(dx)+Math.abs(dy);
+    if(moved>4){ try{svg.setPointerCapture(ev.pointerId);}catch(_){} svg.classList.add('panning'); }
+    maus={x:ev.clientX,y:ev.clientY,id:ev.pointerId}; verschieben(dx,dy); });
+  const mausEnde=()=>{ maus=null; svg.classList.remove('panning'); };
+  svg.addEventListener('pointerup',mausEnde); svg.addEventListener('pointercancel',mausEnde);
+  /* Touch: Ein Finger scrollt die Seite, solange die Karte nicht vergrößert ist.
+     Zwei Finger zoomen und verschieben immer; nach dem Hineinzoomen verschiebt auch ein Finger. */
+  let geste=null;
+  const mitte=t=>({x:(t[0].clientX+t[1].clientX)/2, y:(t[0].clientY+t[1].clientY)/2, d:Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY)});
+  const gesteStart=t=>{ geste = t.length>=2 ? {zwei:true,...mitte(t)} : (mapZoom()>1.01 ? {zwei:false,x:t[0].clientX,y:t[0].clientY} : null); };
+  svg.addEventListener('touchstart',ev=>{ if(ev.touches.length===1) moved=0; gesteStart(ev.touches); },{passive:true});
+  svg.addEventListener('touchmove',ev=>{ if(!geste) return; const t=ev.touches;
+    if (geste.zwei && t.length>=2){ if(ev.cancelable) ev.preventDefault(); const m=mitte(t);
+      const [cx,cy]=toMap(m.x,m.y); if(geste.d>0) zoomAt(m.d/geste.d,cx,cy); verschieben(m.x-geste.x,m.y-geste.y);
+      moved+=10; geste={zwei:true,...m}; return; }
+    if (!geste.zwei && t.length===1){ if(ev.cancelable) ev.preventDefault();
+      const dx=t[0].clientX-geste.x, dy=t[0].clientY-geste.y; moved+=Math.abs(dx)+Math.abs(dy);
+      geste={zwei:false,x:t[0].clientX,y:t[0].clientY}; if(moved>4) svg.classList.add('panning'); verschieben(dx,dy); } },{passive:false});
+  const touchEnde=ev=>{ if(ev.touches.length) gesteStart(ev.touches); else { geste=null; svg.classList.remove('panning'); } };
+  svg.addEventListener('touchend',touchEnde); svg.addEventListener('touchcancel',touchEnde);
   svg.addEventListener('click',ev=>{ if(moved>4){ ev.stopImmediatePropagation(); moved=0; } },true);
   svg.addEventListener('dblclick',ev=>{ ev.preventDefault(); const [cx,cy]=toMap(ev.clientX,ev.clientY); zoomAt(2,cx,cy); });
   document.getElementById('zoom-in').onclick=()=>zoomAt(1.6,VB.x+VB.w/2,VB.y+VB.h/2);
@@ -596,7 +626,8 @@ document.addEventListener('click',ev=>{ const b=ev.target.closest('[data-pin-sel
   document.getElementById('map').scrollIntoView({block:'center',behavior:reduce?'auto':'smooth'}); const n=document.querySelector('[data-pin="'+mapSel+'"]'); if(n) n.focus({preventScroll:true}); });
 document.getElementById('map').addEventListener('click',ev=>{ const g=ev.target.closest('[data-pin]'); mapSel = g ? (mapSel===g.dataset.pin?null:g.dataset.pin) : null; renderMap(); });
 document.addEventListener('keydown',ev=>{ if(ev.key==='Escape'&&mapSel&&document.getElementById('overlay').hidden){ mapSel=null; renderMap(); } });
-window.addEventListener('resize',()=>{ applyVB(); });
+let deckTimer=null;
+window.addEventListener('resize',()=>{ applyVB(); clearTimeout(deckTimer); deckTimer=setTimeout(()=>{ if(!busy) renderDeck(); },200); });
 document.getElementById('map').addEventListener('keydown',ev=>{ const g=ev.target.closest('[data-pin]'); if(g&&(ev.key==='Enter'||ev.key===' ')){ ev.preventDefault(); mapSel=g.dataset.pin; renderMap(); const n=document.querySelector('[data-pin="'+mapSel+'"]'); if(n) n.focus(); } });
 
 /* ---------- Location vorschlagen ---------- */
@@ -782,6 +813,8 @@ function route(){
   if (['entdecken','programm','gemerkt'].includes(h)) { state.tab=h; if(state.openId) { state.openId=null; document.getElementById('overlay').hidden=true; } }
   renderAll();
   if (h.startsWith('e-') && byId(h.slice(2))) openDetail(h.slice(2));
+  /* Sprungziel von der Linkseite /links/: WhatsApp-Community direkt anbieten */
+  if (h==='whatsapp'){ setHash('mitmachen'); document.getElementById('mitmachen').scrollIntoView(); waQuiz('community', document.querySelector('#mitmachen [data-wa="community"]')); }
 }
 window.addEventListener('hashchange',route);
 route();

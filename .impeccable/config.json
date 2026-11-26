@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "layouts/_default/links.html"
+        ],
+        "createdAt": "2026-11-26T16:03:07.203Z",
+        "reason": "Claude: Hierarchie vorhanden (Titel 32px, Termintitel 24px, Linktext 16px, Untertitel 13,5px; Stufen 1,33 und 1,5); Linkzeilen bewusst kompakt wie Linktree"
+      }
+    ]
+  }
+}
