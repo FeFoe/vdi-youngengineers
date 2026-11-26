@@ -20,7 +20,7 @@ curl -fsSLo /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v$
 apt install -y /tmp/hugo.deb && hugo version
 
 adduser --system --group --home /srv/ye-website ye-website
-sudo -u ye-website git clone https://github.com/OWNER/vdi-youngengineers.git /srv/ye-website/repo
+sudo -u ye-website git clone https://github.com/FeFoe/vdi-youngengineers.git /srv/ye-website/repo
 chmod +x /srv/ye-website/repo/deploy/aktualisieren.sh
 # WhatsApp-Nummer und Community-Link einmalig anlegen (nicht im Git)
 sudo -u ye-website cp /srv/ye-website/repo/data/kontakt_whatsapp.beispiel.yaml /srv/ye-website/repo/data/kontakt_whatsapp.yaml

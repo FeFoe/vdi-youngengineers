@@ -195,7 +195,7 @@ function renderChrome(){
   const lim=RANGES[state.radius]; const lbl = lim===Infinity ? 'Ohne Grenze' : 'Hamburg + '+lim+' km';
   document.getElementById('radius-out').textContent=lbl; rad.setAttribute('aria-valuetext',lbl);
   const hiddenN=upcoming().filter(e=>byChips(e)&&!inRange(e)).length;
-  document.getElementById('radius-note').textContent = hiddenN ? hiddenN+' weitere Termine außerhalb · YE-Events sind immer dabei' : 'YE-Events sind immer dabei';
+  document.getElementById('radius-note').textContent = hiddenN ? hiddenN+' weitere außerhalb des Umkreises' : '';
   document.getElementById('cnt-saved').textContent = upcoming().filter(e=>state.saved.has(e.id)).length;
 }
 function rowState(e){

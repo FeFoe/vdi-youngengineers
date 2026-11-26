@@ -28,4 +28,4 @@ disableKinds = ["taxonomy", "term", "RSS"]
 [params]
   beschreibung = "Das Ingenieurnetzwerk für Studierende und Berufseinsteiger*innen in Hamburg: Stammtische, Exkursionen und Vorträge von VDI Hamburger Bezirksverein e. V. – Young Engineers."
   traeger = "VDI Hamburger Bezirksverein e. V."
-  quellcode = "https://github.com/OWNER/vdi-youngengineers"
+  quellcode = "https://github.com/FeFoe/vdi-youngengineers"
