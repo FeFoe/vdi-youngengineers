@@ -1,0 +1,13 @@
+{{ define "main" }}
+<article class="wrap prose">
+  <p><a href="{{ "termine/" | relURL }}">← Alle Termine</a></p>
+  <h1>{{ .Title }}</h1>
+  {{- $s := time.AsTime .Params.start }}
+  <dl class="tl-fakten">
+    <dt>Wann</dt><dd>{{ $s.Format "02.01.2006" }}{{ if not .Params.allday }}, {{ $s.Format "15:04" }}{{ with .Params.end }}–{{ (time.AsTime .).Format "15:04" }}{{ end }} Uhr{{ end }}</dd>
+    {{ with .Params.place }}<dt>Wo</dt><dd>{{ . }}{{ with $.Params.address }}, {{ . }}{{ end }}</dd>{{ end }}
+    <dt>Veranstalter</dt><dd>{{ .Params.org | default "VDI Hamburg – Young Engineers" }}</dd>
+  </dl>
+  {{ .Content }}
+</article>
+{{ end }}

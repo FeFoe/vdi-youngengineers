@@ -1,0 +1,18 @@
+# Redaktionelle Anpassungen an den Terminen, die tools/vdi_termine.py von vdi.de holt.
+# Schlüssel ist der Slug aus der vdi.de-URL (…/veranstaltungen/detail/<slug>).
+
+# Termine, die vdi.de noch zeigt, die aber laut Leitungsteam nicht (so) stattfinden.
+# Eintrag löschen, sobald vdi.de ein neues Datum zeigt.
+ausblenden: []
+#  - slug: detail-slug-von-vdi-de
+#    grund: Termin fällt aus
+#    seit: 2026-11-26
+
+# Ergänzungen und Korrekturen je Termin (überschreiben die Felder von vdi.de).
+# Felder: title, teaser, icon, tipp (true/false), note, tags, geo [Breite, Länge],
+#         group (ye, yenet, hh, nord), mode (hh, online, reise), closed, deadline, spots
+ergaenzen: {}
+#  young-engineers-netzwerktreffen-dezember-2026:
+#    icon: weihnachten
+#    tags: [Erster Drink frei]
+#    note: Unseren genauen Standort teilen wir in der WhatsApp-Community.

@@ -1,0 +1,25 @@
+{{ define "main" }}
+{{- $monat := dict "01" "Januar" "02" "Februar" "03" "März" "04" "April" "05" "Mai" "06" "Juni" "07" "Juli" "08" "August" "09" "September" "10" "Oktober" "11" "November" "12" "Dezember" -}}
+{{- $tag := slice "So." "Mo." "Di." "Mi." "Do." "Fr." "Sa." -}}
+<div class="wrap prose termine-liste">
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+  <p><a class="btn" href="{{ "termine.ics" | relURL }}">Alle Termine als Kalender abonnieren (.ics)</a></p>
+  {{- $aktuell := "" }}
+  {{- range partial "termine.html" . }}
+    {{- $s := time.AsTime .start }}
+    {{- $m := printf "%s %d" (index $monat ($s.Format "01")) $s.Year }}
+    {{- if ne $m $aktuell }}{{ if $aktuell }}</ul>{{ end }}<h2>{{ $m }}</h2><ul class="tl">{{ $aktuell = $m }}{{ end }}
+    <li>
+      <p class="tl-wann">{{ index $tag (int $s.Weekday) }} {{ $s.Format "02.01.2006" }}{{ if .allday }}{{ with .end }} bis {{ (time.AsTime .).Format "02.01.2006" }}{{ end }}{{ else }}, {{ $s.Format "15:04" }}{{ with .end }}–{{ (time.AsTime .).Format "15:04" }}{{ end }} Uhr{{ end }}</p>
+      <h3><a href="{{ .url }}">{{ .title }}</a></h3>
+      <p>{{ .place }}{{ with .address }}, {{ . }}{{ end }} · {{ .org }}</p>
+      {{ with .teaser }}<p class="tl-teaser">{{ . }}</p>{{ end }}
+      {{ with .closed }}<p class="tl-hinweis">{{ . }}</p>{{ end }}
+    </li>
+  {{- else }}
+    <p>Gerade sind keine Termine eingetragen. In der WhatsApp-Community erfährst du als Erstes vom nächsten.</p>
+  {{- end }}
+  {{- if $aktuell }}</ul>{{ end }}
+</div>
+{{ end }}

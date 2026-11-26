@@ -1,0 +1,71 @@
+# Einstellungen für tools/vdi_termine.py
+user_agent = "VDI-Young-Engineers-Hamburg-Termine/1.0 (+https://young-engineers.vdi-hh.de/; hamburg@young-engineers.vdi.de)"
+pause_s = 1.0        # Wartezeit zwischen zwei Abrufen (Rücksicht auf vdi.de und Nominatim)
+geokodierung = true  # Adressen über Nominatim (OpenStreetMap) in Koordinaten umwandeln, Ergebnis wird zwischengespeichert
+umland_km = 60       # weiter weg zählt als „Unterwegs“
+
+# Termine mit diesen Begriffen in Titel oder Veranstalter werden ausgelassen (Kinderangebote)
+ausschliessen = "VDIni|TechnoThek|Zukunftspiloten|MINT-Kurs|ab \\d+ Jahren|\\d+-\\d+-jährige|Kinder|Schüler|Technikfans|Ferienkurs|Vorstand"
+
+# Young-Engineers-Termine außerhalb Hamburgs, die trotzdem als „YE-Netzwerk“ gelten (bundesweite Formate)
+ye_bundesweit = "Netzwerktreffen der VDI Young Engineers|bundesweit|Welcome Call|Jahrestreffen"
+
+# Listen auf vdi.de, deren Detailseiten eingelesen werden (Blättern über /seite/N)
+[[listen]]
+pfad = "/netzwerke-community/bezirksvereine/hamburger-bezirksverein-ev/veranstaltungen"
+max_seiten = 6
+
+[[listen]]  # Young Engineers bundesweit (Welcome Calls, Bundesstammtisch, Netzwerktreffen)
+pfad = "/netzwerke-community/netzwerke/young-engineers"
+max_seiten = 1
+
+[[listen]]
+pfad = "/netzwerke-community/bezirksvereine/schleswig-holsteinischer-bezirksverein/veranstaltungen"
+max_seiten = 2
+
+[[listen]]
+pfad = "/netzwerke-community/bezirksvereine/luebecker-bezirksverein/veranstaltungen"
+max_seiten = 2
+
+[[listen]]
+pfad = "/netzwerke-community/bezirksvereine/bezirksverein-hannover-ev/veranstaltungen"
+max_seiten = 2
+
+[[listen]]
+pfad = "/netzwerke-community/bezirksvereine/unterweser-bezirksverein-ev/veranstaltungen"
+max_seiten = 2
+
+# Zuordnung zu den Filtergruppen der Website (reguläre Ausdrücke)
+[gruppen]
+ye = "Young Engineers Hamburg"
+yenet = "Young Engineers"
+hh = "Hamburger Bezirksverein|Hamburger Arbeitskreise|BGr Lüneburg|Bezirksgruppe Lüneburg"
+
+# Symbol je Thema (erster Treffer gewinnt; Namen siehe ICONS in assets/js/app.js)
+[icons]
+weihnachten = "Weihnacht|Glühwein|Advent"
+stammtisch = "Stammtisch|Netzwerktreffen|Afterwork"
+robotik = "Robot|Automatisierung|Automation|KI\\b|Künstliche Intelligenz"
+drohne = "Drohne"
+luftfahrt = "Luftfahrt|Flugzeug|Airbus|Raumfahrt"
+batterie = "Batterie|Speicher|Elektromobil"
+waermepumpe = "Wärmepumpe|Wärmewende"
+fernwaerme = "Fernwärme|Heiz|Energie"
+wasserstoff = "Wasserstoff"
+seekabel = "Schiff|Hafen|Offshore|Kabel|Meer"
+bewerbung = "Bewerbung|Karriere|Gehalt|Berufseinstieg"
+welcome = "Welcome|Neumitglied"
+sprinkler = "Brandschutz|Sprinkler"
+reise = "Exkursion|Reise|Besichtigung|Führung"
+
+# Übersichten, deren Detailseiten hinter /intern/ liegen (robots.txt): nur die Karten der Übersicht lesen
+[[karten]]
+pfad = "/mitgliedschaft/coaching-angebote/vdi-webinare"
+max_seiten = 3
+gruppe = "vdi"
+modus = "online"
+ort = "Online"
+veranstalter = "VDI-Webinare"
+icon = "gespraech"
+tags = ["Webinar", "Für VDI-Mitglieder"]
+

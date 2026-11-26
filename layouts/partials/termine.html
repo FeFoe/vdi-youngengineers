@@ -1,0 +1,83 @@
+{{- /*
+  Alle Termine als Liste von dicts (Felder wie EVENTS in assets/js/app.js), nach Beginn sortiert.
+  Quellen: data/vdi.json (tools/vdi_termine.py), Anpassungen aus data/termine_anpassungen.yaml
+  und eigene Termine aus content/termine/*.md. Vergangene Termine fallen heraus.
+*/ -}}
+{{- $anp := hugo.Data.termine_anpassungen | default dict -}}
+{{- $erg := $anp.ergaenzen | default dict -}}
+{{- $aus := slice -}}
+{{- range $anp.ausblenden }}{{ $aus = $aus | append .slug }}{{ end -}}
+
+{{- /* Eigene Termine (Markdown) */ -}}
+{{- $eigene := slice -}}
+{{- range where site.RegularPages "Section" "termine" -}}
+  {{- $p := .Params -}}
+  {{- $allday := $p.allday | default false -}}
+  {{- $fmt := cond $allday "2006-01-02" "2006-01-02T15:04:05-07:00" -}}
+  {{- $start := (time.AsTime $p.start).Format $fmt -}}
+  {{- $end := "" -}}
+  {{- with $p.end }}{{ $end = (time.AsTime .).Format $fmt }}{{ end -}}
+  {{- $desc := slice -}}
+  {{- range split (strings.TrimSpace .RawContent) "\n\n" }}{{ with strings.TrimSpace . }}{{ $desc = $desc | append (. | markdownify | plainify) }}{{ end }}{{ end -}}
+  {{- $e := dict
+      "id" .File.ContentBaseName "title" .Title "start" $start "end" $end "allday" $allday
+      "group" ($p.group | default "ye") "mode" ($p.mode | default "hh") "icon" ($p.icon | default "stammtisch")
+      "place" ($p.place | default "") "address" ($p.address | default "") "org" ($p.org | default "VDI Hamburg – Young Engineers")
+      "teaser" ($p.teaser | default .Summary | plainify) "desc" $desc "tags" ($p.tags | default slice)
+      "url" ($p.url | default .Permalink) "tipp" ($p.tipp | default false)
+  -}}
+  {{- range $k := slice "geo" "note" "closed" "deadline" "spots" "noreg" }}{{ with index $p $k }}{{ $e = merge $e (dict $k .) }}{{ end }}{{ end -}}
+  {{- $eigene = $eigene | append $e -}}
+{{- end -}}
+{{- $eigeneUrls := slice }}{{ range $eigene }}{{ $eigeneUrls = $eigeneUrls | append .url }}{{ end -}}
+
+{{- /* Termine von vdi.de */ -}}
+{{- $liste := $eigene -}}
+{{- with hugo.Data.vdi -}}
+  {{- range .termine -}}
+    {{- if and (not (in $aus .id)) (not (in $eigeneUrls .url)) -}}
+      {{- $e := . -}}
+      {{- with index $erg .id }}{{ $e = merge $e . }}{{ end -}}
+      {{- $liste = $liste | append $e -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Prognose: Stammtisch am letzten Dienstag im Monat (data/stammtisch.yaml),
+       außer an Hamburger Feiertagen und wenn es im Monat schon einen echten YE-Termin gibt */ -}}
+{{- with hugo.Data.stammtisch -}}
+  {{- $regel := . -}}
+  {{- $monatsnamen := slice "Januar" "Februar" "März" "April" "Mai" "Juni" "Juli" "August" "September" "Oktober" "November" "Dezember" -}}
+  {{- $yeMonate := slice -}}
+  {{- range $liste }}{{ if eq .group "ye" }}{{ $yeMonate = $yeMonate | append (substr .start 0 7) }}{{ end }}{{ end -}}
+  {{- $erster := time.AsTime (printf "%s-01" (now.Format "2006-01")) -}}
+  {{- range $i := seq 0 (sub $regel.monate 1) -}}
+    {{- $monat := $erster.AddDate 0 $i 0 -}}
+    {{- $letzter := ($monat.AddDate 0 1 0).AddDate 0 0 -1 -}}
+    {{- $versatz := mod (add (sub (int $letzter.Weekday) $regel.wochentag) 7) 7 -}}
+    {{- $tag := $letzter.AddDate 0 0 (mul -1 $versatz) -}}
+    {{- $ymd := $tag.Format "2006-01-02" -}}
+    {{- $frei := or (in $regel.feiertage ($tag.Format "01-02")) (in ($regel.ausfallen | default slice) $ymd) -}}
+    {{- if and (not $frei) (not (in $yeMonate ($tag.Format "2006-01"))) -}}
+      {{- $fmt := "2006-01-02T15:04:05-07:00" -}}
+      {{- $liste = $liste | append (dict
+          "id" (printf "stammtisch-%s" ($tag.Format "2006-01"))
+          "title" (printf "%s %s" $regel.titel (index $monatsnamen (sub (int $tag.Month) 1)))
+          "start" ((time.AsTime (printf "%sT%s:00" $ymd $regel.beginn) "Europe/Berlin").Format $fmt)
+          "end" ((time.AsTime (printf "%sT%s:00" $ymd $regel.ende) "Europe/Berlin").Format $fmt)
+          "group" "ye" "mode" "hh" "icon" "stammtisch" "geplant" true "noreg" true
+          "place" "Ort folgt" "address" "Hamburg" "org" "VDI Hamburg – Young Engineers"
+          "teaser" $regel.teaser "desc" (slice $regel.teaser) "tags" (slice "Erster Drink frei")
+          "url" hugo.Data.kontakt.vdiSeite) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Nur Kommendes, nach Beginn sortiert */ -}}
+{{- $heute := now.AddDate 0 0 -1 -}}
+{{- $kommend := slice -}}
+{{- range $liste -}}
+  {{- $ende := time.AsTime (.end | default .start) -}}
+  {{- if $ende.After $heute }}{{ $kommend = $kommend | append . }}{{ end -}}
+{{- end -}}
+{{- return sort $kommend "start" -}}

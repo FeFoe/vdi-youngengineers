@@ -1,0 +1,18 @@
+# Regel für den monatlichen Stammtisch der Young Engineers Hamburg.
+# Daraus entstehen „geplante“ Termine für die nächsten Monate (layouts/partials/termine.html).
+# Sobald für einen Monat ein echter YE-Hamburg-Termin vorliegt (vdi.de oder content/termine/),
+# ersetzt dieser die Prognose automatisch.
+titel: Young Engineers Stammtisch
+wochentag: 2        # 0 = Sonntag, 1 = Montag, 2 = Dienstag …
+beginn: "18:30"
+ende: "21:30"
+monate: 6           # wie viele Monate im Voraus
+teaser: "Wie jeden letzten Dienstag im Monat. Ort und Anmeldung folgen, sobald der Termin feststeht – zuerst in der WhatsApp-Community."
+
+# Gesetzliche Feiertage in Hamburg (MM-TT). Fällt der letzte Dienstag darauf, entfällt die Prognose.
+# Die beweglichen Feiertage (Karfreitag, Ostermontag, Christi Himmelfahrt, Pfingstmontag)
+# fallen nie auf einen Dienstag und müssen daher nicht berechnet werden.
+feiertage: ["01-01", "05-01", "10-03", "10-31", "12-25", "12-26"]
+
+# Einzelne Termine, die zusätzlich ausfallen (JJJJ-MM-TT), z. B. wegen Sommerpause
+ausfallen: []
