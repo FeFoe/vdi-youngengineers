@@ -594,6 +594,7 @@ function placePop(){
   const w=pop.offsetWidth, h=pop.offsetHeight;
   let left=Math.max(8,Math.min(box.width-w-8,px-w/2)), top=py-30*s0-h-6, below=false;
   if (top<8){ top=py+10; below=true; }
+  if (below && top+h>box.height-8) top=Math.max(8,box.height-h-8); /* passt weder über noch unter den Pin: in der Karte halten */
   pop.style.left=left+'px'; pop.style.top=top+'px'; pop.classList.toggle('below',below);
 }
 (function(){
@@ -648,6 +649,8 @@ function renderMap(){
     ? (()=>{ const f=FOTOS.find(x=>x.st===sel.x.id); return (f?'<img class="mp-foto" src="'+esc(f.src)+'" width="'+f.w+'" height="'+f.h+'" alt="Stammtisch im '+esc(sel.x.name)+', '+esc(sel.x.when)+'">':'')+'<b class="mp-name">'+esc(sel.x.name)+'</b><span class="mp-when">'+esc(sel.x.when)+'</span>'; })()
     : '<span class="mp-when up">Demnächst</span>'+sel.evs.map(e=>'<button type="button" class="mp-ev" data-open="'+e.id+'"><b>'+esc(fShort.format(startDate(e)).replace(/\.$/,''))+'.</b> '+esc(e.title)+'</button>').join('');
   pop.hidden=false;
+  /* Foto lädt erst nach dem Einblenden: danach Popup neu ausrichten, sonst ragt es über die Karte hinaus */
+  const foto=pop.querySelector('img'); if(foto && !foto.complete) foto.addEventListener('load',placePop,{once:true});
   applyVB();
 }
 document.addEventListener('click',ev=>{ const b=ev.target.closest('[data-pin-sel]'); if(!b) return; mapSel=b.dataset.pinSel; renderMap();

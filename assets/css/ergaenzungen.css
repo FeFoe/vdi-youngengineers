@@ -84,6 +84,8 @@ ul.tiles .tile{flex:1}
 
 /* Fotos im Karten-Popup */
 .mpop .mp-foto{display:block;width:220px;max-width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:6px;margin:2px 0 8px}
+/* Handy: Foto im Popup kleiner, sonst verdeckt das Popup die halbe Karte und wird unten abgeschnitten */
+@media (max-width:640px){.mpop .mp-foto{width:150px;margin-bottom:6px}}
 
 /* Kopf und Fuß: erst Hamburger Bezirksverein, dann Young Engineers */
 .brand-txt span{order:0}
