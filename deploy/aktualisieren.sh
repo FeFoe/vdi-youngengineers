@@ -35,7 +35,7 @@ fi
 [ "$bauen" = 0 ] && exit 0
 
 # WhatsApp-Ziele bei jedem Build mit neuer ALTCHA-Aufgabe verschlüsseln
-python3 tools/wa_schutz.py
+python3 tools/wa_schutz.py || echo "WhatsApp-Ziele nicht verschlüsselt (data/kontakt_whatsapp.yaml fehlt?)" >&2
 
 neu="$ZIEL.neu"
 rm -rf "$neu"

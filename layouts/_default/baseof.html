@@ -9,6 +9,9 @@
 <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
 <link rel="alternate" type="text/calendar" title="Termine (iCalendar)" href="{{ "termine.ics" | relURL }}">
 <meta name="theme-color" content="#003DA4">
+{{- if eq (getenv "HUGO_VORSCHAU") "1" }}
+<meta name="robots" content="noindex, nofollow">
+{{- end }}
 <meta property="og:type" content="website">
 <meta property="og:locale" content="de_DE">
 <meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">

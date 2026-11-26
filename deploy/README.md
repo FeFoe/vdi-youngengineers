@@ -1,69 +1,69 @@
-# Betrieb auf der Proxmox-VM
+# Betrieb auf der VM
 
-Ziel: Die VM baut die Seite selbst, ohne GitHub Actions. Ein systemd-Timer schaut alle 5 Minuten nach neuen Commits auf `main` und baut dann neu. Ein zweiter Timer holt zweimal täglich die Termine von vdi.de. Caddy liefert die fertigen Dateien mit automatischem HTTPS aus.
+Die VM baut die Seite selbst. GitHub Actions prüft nur (siehe `.github/workflows/pruefen.yml`) und braucht keinen Zugang zur VM.
 
 ```
-GitHub (main) ──git fetch──▶ VM: /srv/ye-website/repo ──hugo──▶ /srv/ye-website/public ──Caddy──▶ Internet
-                               ▲
-                 vdi.de ──tools/vdi_termine.py (05:30 Uhr, 17:30 Uhr)
+GitHub (main) ──git fetch alle 5 min──▶ /srv/ye-website/repo ──hugo──▶ /srv/ye-website/public ──Caddy──▶ Internet
+                                          ▲
+                        vdi.de ── tools/vdi_termine.py (05:30 Uhr, 17:30 Uhr)
 ```
 
-## 1. VM einrichten (Debian 13)
+## Einrichten (Debian 13, VM oder LXC)
 
-Empfehlung: 1 vCPU, 1 GB RAM, 8 GB Speicher. Als LXC-Container geht es genauso.
+Empfehlung: 1 vCPU, 1 GB RAM, 8 GB Speicher. Port 80 und 443 müssen aus dem Internet auf die VM zeigen.
 
 ```sh
-apt update && apt install -y git python3 caddy
-# Hugo extended in der Version aus README.md (Debian-Paket ist meist zu alt)
-HUGO=0.169.0
-curl -fsSLo /tmp/hugo.deb "https://github.com/gohugoio/hugo/releases/download/v${HUGO}/hugo_extended_${HUGO}_linux-amd64.deb"
-apt install -y /tmp/hugo.deb && hugo version
+curl -fsSLO https://raw.githubusercontent.com/FeFoe/vdi-youngengineers/main/deploy/einrichten.sh
+sudo YE_DOMAINS="vdiye.foerster.engineer" YE_BASEURL="https://vdiye.foerster.engineer/" \
+     bash einrichten.sh --vorschau vdi
+```
 
-adduser --system --group --home /srv/ye-website ye-website
-sudo -u ye-website git clone https://github.com/FeFoe/vdi-youngengineers.git /srv/ye-website/repo
-chmod +x /srv/ye-website/repo/deploy/aktualisieren.sh
-# WhatsApp-Nummer und Community-Link einmalig anlegen (nicht im Git)
-sudo -u ye-website cp /srv/ye-website/repo/data/kontakt_whatsapp.beispiel.yaml /srv/ye-website/repo/data/kontakt_whatsapp.yaml
+Das Skript ist idempotent und erledigt alles:
+
+- Pakete (git, python3, caddy) und Hugo extended in der passenden Version
+- Systembenutzer `ye-website` und Klon des Repos nach `/srv/ye-website/repo`
+- `data/kontakt_whatsapp.yaml` aus der Vorlage (danach echte Werte eintragen, siehe unten)
+- systemd-Timer: `ye-website.timer` (alle 5 min neue Commits), `ye-termine.timer` (Termine zweimal täglich)
+- Caddy mit automatischem HTTPS, ohne Zugriffsprotokoll
+- erster Build
+
+WhatsApp-Daten eintragen (einmalig, nicht im Git):
+
+```sh
 sudo -u ye-website nano /srv/ye-website/repo/data/kontakt_whatsapp.yaml
-sudo -u ye-website /srv/ye-website/repo/deploy/aktualisieren.sh --termine   # erster Build
+sudo systemctl start ye-termine.service     # neu bauen
 ```
 
-## 2. Timer aktivieren
+## Vorschau oder live
 
-```sh
-cp /srv/ye-website/repo/deploy/systemd/* /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable --now ye-website.timer ye-termine.timer
-systemctl list-timers 'ye-*'
-journalctl -u ye-website -u ye-termine -n 50     # Protokoll
-```
+| Modus | Aufruf | Wirkung |
+|---|---|---|
+| Vorschau | `einrichten.sh --vorschau PASSWORT` | Passwortschutz (Benutzer `vdi`), `robots.txt` verbietet alles, `noindex` in Meta-Tag und Header |
+| Live | `einrichten.sh --live` | öffentlich, Suchmaschinen erlaubt |
 
-## 3. Caddy
+Umschalten = Skript erneut mit dem anderen Modus aufrufen. Der Modus steht in `/etc/default/ye-website` (`HUGO_VORSCHAU`) und `/etc/caddy/ye-zugang.caddy`.
 
-```sh
-cp /srv/ye-website/repo/deploy/Caddyfile /etc/caddy/Caddyfile
-systemctl reload caddy
-```
-
-Caddy holt die Zertifikate selbst. Vorher müssen Port 80 und 443 aus dem Internet auf die VM zeigen (Portweiterleitung bzw. Proxmox-Firewall).
-
-Zum Schreiben des Journals (Fehler beim Bauen) gilt die Standardaufbewahrung von journald. Für die Datenschutzerklärung („Fehlerprotokolle nach spätestens 7 Tagen gelöscht“): `/etc/systemd/journald.conf` → `MaxRetentionSec=7day`, dann `systemctl restart systemd-journald`.
-
-## 4. DNS
+## Domains
 
 | Name | Typ | Ziel |
 |---|---|---|
 | `vdiye.foerster.engineer` | A / AAAA | öffentliche IP der VM |
 | `young-engineers.vdi-hh.de` | CNAME | `vdiye.foerster.engineer.` |
 
-Den CNAME setzt, wer die Domain `vdi-hh.de` verwaltet (Geschäftsstelle des Bezirksvereins). Bis er steht, ist die Seite unter `vdiye.foerster.engineer` erreichbar. Caddy bekommt das Zertifikat für `young-engineers.vdi-hh.de` automatisch, sobald der CNAME auflöst.
-
-Solange nur die Testadresse läuft, in beiden `.service`-Dateien `HUGO_BASEURL=https://vdiye.foerster.engineer/` setzen, damit Links und Kalender-Abo stimmen.
-
-## Updates
-
-Inhalte ändern = Commit auf `main`. Spätestens 5 Minuten später ist die Seite neu gebaut. Termine sofort neu holen:
+Sobald der CNAME steht (setzt die Geschäftsstelle des Bezirksvereins), das Skript erneut aufrufen:
 
 ```sh
-systemctl start ye-termine.service
+sudo YE_DOMAINS="young-engineers.vdi-hh.de, vdiye.foerster.engineer" YE_BASEURL="https://young-engineers.vdi-hh.de/" \
+     bash /srv/ye-website/repo/deploy/einrichten.sh --live
 ```
+
+## Alltag
+
+```sh
+systemctl list-timers 'ye-*'                      # nächste Läufe
+journalctl -u ye-website -u ye-termine -n 50      # Protokoll
+sudo systemctl start ye-website.service           # sofort neu bauen
+sudo systemctl start ye-termine.service           # Termine sofort neu holen
+```
+
+Für die Datenschutzerklärung („Fehlerprotokolle nach spätestens 7 Tagen gelöscht“): in `/etc/systemd/journald.conf` `MaxRetentionSec=7day` setzen, dann `systemctl restart systemd-journald`.

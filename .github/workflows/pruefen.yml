@@ -1,0 +1,49 @@
+# Prüft jede Änderung: Hugo-Build, JavaScript- und Python-Syntax.
+# Bewusst sparsam (meist unter 1 Minute): kein Deployment aus GitHub heraus.
+# Die VM holt sich neue Commits selbst (deploy/systemd/ye-website.timer) – dafür braucht GitHub weder SSH-Zugang noch Secrets.
+name: Prüfen
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "docs/**", "LICENSE"]
+  pull_request:
+    paths-ignore: ["**.md", "docs/**", "LICENSE"]
+  workflow_dispatch:
+
+concurrency:
+  group: pruefen-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      HUGO_VERSION: "0.169.0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Hugo installieren
+        run: |
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" | tar -xz -C /usr/local/bin hugo
+          hugo version
+
+      - name: Skripte prüfen
+        run: |
+          python3 -m py_compile tools/vdi_termine.py tools/wa_schutz.py
+          node --check assets/js/app.js
+          bash -n deploy/aktualisieren.sh deploy/einrichten.sh
+
+      - name: Website bauen (ohne Termine von vdi.de und ohne WhatsApp-Daten)
+        env:
+          HUGO_VORSCHAU: "1"
+        run: hugo --gc --minify --panicOnWarning
+
+      - name: Keine WhatsApp-Daten im Build
+        run: |
+          ! grep -rqE "chat\.whatsapp\.com/[A-Za-z0-9]{10,}|wa\.me/[0-9]{8,}" public/
+          grep -q "Disallow: /" public/robots.txt

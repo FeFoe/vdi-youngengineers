@@ -1,17 +1,21 @@
 # Caddy: statische Auslieferung mit automatischem HTTPS (Let's Encrypt).
-# Ziel-Datei auf der VM: /etc/caddy/Caddyfile
+# Ziel auf der VM: /etc/caddy/Caddyfile – wird von deploy/einrichten.sh installiert.
 #
-# Kein `log`-Block = Caddy schreibt KEIN Zugriffsprotokoll (keine IP-Adressen). So bleibt es datensparsam.
+# Kein `log`-Block = Caddy schreibt KEIN Zugriffsprotokoll (keine IP-Adressen gespeichert).
+# Vorschau oder live steuert /etc/caddy/ye-zugang.caddy (von einrichten.sh geschrieben):
+#   Vorschau: Passwortschutz + X-Robots-Tag noindex
+#   Live:     leer
+# Die Domains kommen aus YE_DOMAINS (systemd-Drop-in von einrichten.sh).
 
 {
 	email hamburg@young-engineers.vdi.de
 }
 
-# Hauptadresse (CNAME young-engineers.vdi-hh.de -> vdiye.foerster.engineer)
-young-engineers.vdi-hh.de, vdiye.foerster.engineer {
+{$YE_DOMAINS:vdiye.foerster.engineer} {
 	root * /srv/ye-website/public
 	encode zstd gzip
-	file_server
+
+	import /etc/caddy/ye-zugang.caddy
 
 	header {
 		Strict-Transport-Security "max-age=31536000"
@@ -22,11 +26,13 @@ young-engineers.vdi-hh.de, vdiye.foerster.engineer {
 		-Server
 	}
 
-	@statisch path /css/* /js/* /fonts/* /fotos/* /team/* *.webp
+	@statisch path /css/* /js/* /fonts/* *.webp *.woff2
 	header @statisch Cache-Control "public, max-age=31536000, immutable"
 
 	@ics path /termine.ics
 	header @ics Content-Type "text/calendar; charset=utf-8"
+
+	file_server
 
 	handle_errors {
 		rewrite * /404.html
