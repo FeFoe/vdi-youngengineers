@@ -1,0 +1,35 @@
+# Caddy: statische Auslieferung mit automatischem HTTPS (Let's Encrypt).
+# Ziel-Datei auf der VM: /etc/caddy/Caddyfile
+#
+# Kein `log`-Block = Caddy schreibt KEIN Zugriffsprotokoll (keine IP-Adressen). So bleibt es datensparsam.
+
+{
+	email hamburg@young-engineers.vdi.de
+}
+
+# Hauptadresse (CNAME young-engineers.vdi-hh.de -> vdiye.foerster.engineer)
+young-engineers.vdi-hh.de, vdiye.foerster.engineer {
+	root * /srv/ye-website/public
+	encode zstd gzip
+	file_server
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "geolocation=(), camera=(), microphone=(), interest-cohort=()"
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+		-Server
+	}
+
+	@statisch path /css/* /js/* /fonts/* /fotos/* /team/* *.webp
+	header @statisch Cache-Control "public, max-age=31536000, immutable"
+
+	@ics path /termine.ics
+	header @ics Content-Type "text/calendar; charset=utf-8"
+
+	handle_errors {
+		rewrite * /404.html
+		file_server
+	}
+}

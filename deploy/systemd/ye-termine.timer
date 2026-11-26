@@ -1,0 +1,10 @@
+[Unit]
+Description=VDI Young Engineers Hamburg: Termine täglich um 05:30 Uhr und 17:30 Uhr aktualisieren
+
+[Timer]
+OnCalendar=*-*-* 05,17:30:00
+RandomizedDelaySec=10min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

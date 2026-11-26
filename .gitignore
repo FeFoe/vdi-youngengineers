@@ -1,0 +1,23 @@
+# Quellmaterial (Brandguidelines, Artefakt): intern, nicht veröffentlichen
+/referenz/
+
+# Build-Ausgabe von Hugo
+/public/
+/resources/_gen/
+/.hugo_build.lock
+
+# Von tools/vdi_termine.py erzeugt (wird auf dem Server täglich neu geholt)
+/data/vdi.json
+/.cache/
+
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Lokale Editor-/Claude-Einstellungen
+/.claude/
+/data/wa_schutz.json
+
+# WhatsApp-Nummer und Community-Link (nur auf dem Server, nie öffentlich)
+/data/kontakt_whatsapp.yaml

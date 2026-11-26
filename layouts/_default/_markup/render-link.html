@@ -1,0 +1,3 @@
+{{- $extern := strings.HasPrefix .Destination "http" -}}
+<a href="{{ .Destination | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $extern }} rel="noopener"{{ end }}>{{ .Text | safeHTML }}</a>
+{{- /* kein Zeilenumbruch */ -}}

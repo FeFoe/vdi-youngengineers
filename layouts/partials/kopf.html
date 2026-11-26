@@ -1,0 +1,16 @@
+{{- $start := cond .IsHome "" ("/" | relURL) -}}
+<header class="site">
+  <div class="wrap site-in">
+    <a class="brand" href="{{ "/" | relURL }}" aria-label="VDI Hamburger Bezirksverein e. V. – Young Engineers, zur Startseite">
+      <span class="brand-logo"><svg viewBox="0 0 982 614" role="img" aria-label="VDI"><use href="#vdi-logo"/></svg></span>
+      <span class="brand-txt"><span>Hamburger Bezirksverein e. V.</span><b>Young Engineers</b></span>
+    </a>
+    <nav class="nav" aria-label="Hauptnavigation">
+      <a href="{{ $start }}#termine">Termine</a>
+      <a href="{{ $start }}#karte">Stammtisch-Karte</a>
+      <a href="{{ $start }}#mitmachen">Mitmachen</a>
+      <a href="{{ $start }}#vdi">VDI-Angebote</a>
+      <a href="{{ $start }}#kontakt">Kontakt</a>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,4 @@
+# Einheitlich LF, damit deploy/*.sh und systemd-Dateien auf der VM laufen
+* text=auto eol=lf
+*.jpg binary
+*.woff2 binary

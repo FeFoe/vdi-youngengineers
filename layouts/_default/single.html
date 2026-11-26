@@ -1,0 +1,7 @@
+{{ define "main" }}
+<article class="wrap prose">
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+  {{ with .Lastmod }}<p class="stand-text">Stand: {{ .Format "02.01.2006" }}</p>{{ end }}
+</article>
+{{ end }}

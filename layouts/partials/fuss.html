@@ -1,0 +1,38 @@
+{{- $v := hugo.Data.verein -}}
+{{- $k := hugo.Data.kontakt -}}
+{{- $start := cond .IsHome "" ("/" | relURL) -}}
+<footer class="fuss">
+  <div class="wrap fuss-in">
+    <div class="fuss-marke">
+      <a class="fuss-logo" href="{{ "/" | relURL }}" aria-label="Zur Startseite"><svg viewBox="0 0 982 614" role="img" aria-label="VDI"><use href="#vdi-logo"/></svg></a>
+      <p class="fuss-name">Hamburger Bezirksverein e. V.<b>Young Engineers</b></p>
+      <p class="fuss-text">Das Netzwerk für Studierende und junge Berufstätige im {{ $v.name }}</p>
+    </div>
+    <nav class="fuss-spalte" aria-labelledby="fuss-kontakt">
+      <h2 id="fuss-kontakt">Kontakt</h2>
+      <ul>
+        <li><a href="{{ $start }}#kontakt" data-wa="chat" aria-haspopup="dialog">WhatsApp</a></li>
+        <li><a href="mailto:{{ $k.email }}">{{ $k.email }}</a></li>
+        <li><a href="{{ $k.instagram }}" rel="noopener">Instagram</a></li>
+      </ul>
+    </nav>
+    <nav class="fuss-spalte" aria-labelledby="fuss-termine">
+      <h2 id="fuss-termine">Termine</h2>
+      <ul>
+        <li><a href="{{ "termine/" | relURL }}">Alle Termine als Liste</a></li>
+        <li><a href="{{ "termine.ics" | relURL }}">Kalender abonnieren</a></li>
+        <li><a href="{{ $k.vdiSeite }}" rel="noopener">Unsere Seite auf vdi.de</a></li>
+      </ul>
+    </nav>
+    <nav class="fuss-spalte" aria-labelledby="fuss-recht">
+      <h2 id="fuss-recht">Rechtliches</h2>
+      <ul>
+        <li><a href="{{ "impressum/" | relURL }}">Impressum</a></li>
+        <li><a href="{{ "datenschutz/" | relURL }}">Datenschutz</a></li>
+        <li><a href="{{ "barrierefreiheit/" | relURL }}">Barrierefreiheit</a></li>
+      </ul>
+    </nav>
+    <p class="fuss-copy">© {{ now.Year }} {{ $v.name }}</p>
+  </div>
+  <svg class="fuss-signet" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M12 2h18v18h-6V8H12z"/><path d="M2 12h18v18h-6V18H2z"/></svg>
+</footer>

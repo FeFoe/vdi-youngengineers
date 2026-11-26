@@ -1,0 +1,18 @@
+{{- /* Angaben aus data/verein.yaml: {{< verein "anschrift" >}}, "vorstand", "kontakt", "register", "name" */ -}}
+{{- $v := hugo.Data.verein -}}
+{{- $was := .Get 0 -}}
+{{- if eq $was "anschrift" -}}
+<address>{{ $v.name }}<br>{{ $v.strasse }}<br>{{ $v.plz }} {{ $v.ort }}</address>
+{{- else if eq $was "vorstand" -}}
+<ul>{{ range $v.vorstand }}<li>{{ . }}</li>{{ end }}</ul>
+{{- else if eq $was "kontakt" -}}
+<p>Telefon: <a href="tel:{{ replaceRE `[^+\d]` "" $v.telefon }}">{{ $v.telefon }}</a><br>Telefax: {{ $v.telefax }}<br>E-Mail: <a href="mailto:{{ $v.email }}">{{ $v.email }}</a></p>
+{{- else if eq $was "register" -}}
+{{ $v.register }}
+{{- else if eq $was "dsb" -}}
+{{ with $v.datenschutzbeauftragter }}<h2>Datenschutzbeauftragte*r</h2><p>{{ . }}</p>{{ end }}
+{{- else if eq $was "hosting" -}}
+{{ $v.hosting }}
+{{- else -}}
+{{ $v.name }}
+{{- end -}}

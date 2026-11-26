@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+<meta name="description" content="{{ .Description | default site.Params.beschreibung }}">
+<link rel="canonical" href="{{ .Permalink }}">
+<link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
+<link rel="alternate" type="text/calendar" title="Termine (iCalendar)" href="{{ "termine.ics" | relURL }}">
+<meta name="theme-color" content="#003DA4">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:description" content="{{ .Description | default site.Params.beschreibung }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<link rel="preload" href="{{ "fonts/NunitoSans-Regular.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ "fonts/Rajdhani-Bold.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+{{- $css := slice (resources.Get "css/schriften.css") (resources.Get "css/seite.css") (resources.Get "css/ergaenzungen.css") | resources.Concat "css/ye.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+</head>
+<body>
+<a class="skiplink" href="#inhalt">Zum Inhalt springen</a>
+{{ partial "logo-symbol.html" . }}
+{{ partial "kopf.html" . }}
+<main id="inhalt"{{ if .IsHome }} class="start"{{ end }}>
+{{ block "main" . }}{{ end }}
+</main>
+{{ partial "fuss.html" . }}
+{{ block "skripte" . }}{{ end }}
+</body>
+</html>

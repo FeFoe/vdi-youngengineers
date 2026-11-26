@@ -1,0 +1,16 @@
+[Unit]
+Description=VDI Young Engineers Hamburg: Termine von vdi.de holen und Website bauen
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=ye-website
+Group=ye-website
+Environment=HUGO_BASEURL=https://young-engineers.vdi-hh.de/
+ExecStart=/srv/ye-website/repo/deploy/aktualisieren.sh --termine
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=/srv/ye-website

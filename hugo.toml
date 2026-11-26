@@ -1,0 +1,31 @@
+# Hugo-Konfiguration der Website der VDI Young Engineers Hamburg.
+# baseURL lässt sich beim Bauen per Umgebungsvariable HUGO_BASEURL überschreiben (siehe deploy/).
+baseURL = "https://young-engineers.vdi-hh.de/"
+locale = "de-DE"
+defaultContentLanguage = "de"
+title = "VDI Hamburger Bezirksverein e. V. – Young Engineers"
+timeZone = "Europe/Berlin"
+enableRobotsTXT = true
+disableKinds = ["taxonomy", "term", "RSS"]
+
+# Abonnierbarer Kalender aller kommenden Termine unter /termine.ics
+[outputFormats.Kalender]
+  mediaType = "text/calendar"
+  baseName = "termine"
+  isPlainText = true
+  notAlternative = true
+
+[outputs]
+  home = ["HTML", "Kalender"]
+  section = ["HTML"]
+  page = ["HTML"]
+
+[imaging]
+  resampleFilter = "Lanczos"
+  [imaging.webp]
+    quality = 78
+
+[params]
+  beschreibung = "Das Ingenieurnetzwerk für Studierende und Berufseinsteiger*innen in Hamburg: Stammtische, Exkursionen und Vorträge von VDI Hamburger Bezirksverein e. V. – Young Engineers."
+  traeger = "VDI Hamburger Bezirksverein e. V."
+  quellcode = "https://github.com/OWNER/vdi-youngengineers"

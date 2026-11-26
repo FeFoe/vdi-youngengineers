@@ -1,0 +1,10 @@
+[Unit]
+Description=VDI Young Engineers Hamburg: alle 5 Minuten auf neue Commits prüfen
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
