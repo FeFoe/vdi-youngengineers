@@ -40,11 +40,11 @@ echo "== Benutzer und Repository"
 id ye-website >/dev/null 2>&1 || adduser --system --group --home "$BASIS" ye-website
 install -d -o ye-website -g ye-website "$BASIS"
 if [ ! -d "$BASIS/repo/.git" ]; then
-  sudo -u ye-website git clone -q "$REPO_URL" "$BASIS/repo"
+  runuser -u ye-website -- git clone -q "$REPO_URL" "$BASIS/repo"
 fi
 chmod +x "$BASIS/repo/deploy/aktualisieren.sh"
 if [ ! -f "$BASIS/repo/data/kontakt_whatsapp.yaml" ]; then
-  sudo -u ye-website cp "$BASIS/repo/data/kontakt_whatsapp.beispiel.yaml" "$BASIS/repo/data/kontakt_whatsapp.yaml"
+  runuser -u ye-website -- cp "$BASIS/repo/data/kontakt_whatsapp.beispiel.yaml" "$BASIS/repo/data/kontakt_whatsapp.yaml"
   echo "!! Bitte WhatsApp-Nummer und Community-Link eintragen: $BASIS/repo/data/kontakt_whatsapp.yaml"
 fi
 
