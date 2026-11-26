@@ -844,5 +844,52 @@ function route(){
   /* Sprungziel von der Linkseite /links/: WhatsApp-Community direkt anbieten */
   if (h==='whatsapp'){ setHash('mitmachen'); document.getElementById('mitmachen').scrollIntoView(); waQuiz('community', document.querySelector('#mitmachen [data-wa="community"]')); }
 }
+/* ---------- Handy: Fenster nach unten wegziehen ----------
+   Auf schmalen Bildschirmen docken Termin-Details, „Gemerkt“ und die WhatsApp-Frage unten an.
+   Steht der Inhalt ganz oben, zieht eine Wischbewegung nach unten das Fenster mit und schließt es
+   ab einem Viertel der Höhe (oder bei schnellem Wischen). Sonst scrollt der Inhalt wie gewohnt. */
+const schmal=matchMedia('(max-width:640px)');
+function wegziehen(sheet, schliessen){
+  if(!sheet) return;
+  const overlay=sheet.parentElement;
+  let y0=0, x0=0, t0=0, dy=0, aktiv=false, entschieden=false;
+  const zuruecksetzen=()=>{ sheet.classList.remove('ziehen'); sheet.style.transform=''; overlay.style.background=''; };
+  sheet.addEventListener('touchstart',ev=>{
+    aktiv = schmal.matches && ev.touches.length===1 && sheet.scrollTop<=0;
+    if(!aktiv) return;
+    const t=ev.touches[0]; y0=t.clientY; x0=t.clientX; t0=performance.now(); dy=0; entschieden=false;
+  },{passive:true});
+  sheet.addEventListener('touchmove',ev=>{
+    if(!aktiv) return;
+    if(ev.touches.length!==1){ aktiv=false; zuruecksetzen(); return; }
+    const t=ev.touches[0], d=t.clientY-y0, dx=t.clientX-x0;
+    if(!entschieden){
+      if(Math.abs(d)<6 && Math.abs(dx)<6) return;
+      entschieden=true;
+      if(d<=0 || Math.abs(dx)>Math.abs(d)){ aktiv=false; return; } /* nach oben oder seitwärts: normal scrollen */
+      sheet.classList.add('ziehen');
+    }
+    if(ev.cancelable) ev.preventDefault();
+    dy=Math.max(0,d);
+    sheet.style.transform='translateY('+dy+'px)';
+    overlay.style.background='rgba(0,12,25,'+(0.5*Math.max(0,1-dy/sheet.offsetHeight)).toFixed(3)+')';
+  },{passive:false});
+  const ende=()=>{
+    if(!aktiv) return; aktiv=false;
+    if(!entschieden){ return; }
+    const tempo=dy/Math.max(1,performance.now()-t0);
+    sheet.classList.remove('ziehen');
+    if(dy>sheet.offsetHeight*0.25 || (dy>40 && tempo>0.6)){
+      sheet.style.transform='translateY(100%)'; overlay.style.background='rgba(0,12,25,0)';
+      setTimeout(()=>{ schliessen(); zuruecksetzen(); }, reduce?0:200);
+    } else zuruecksetzen();
+    dy=0;
+  };
+  sheet.addEventListener('touchend',ende); sheet.addEventListener('touchcancel',ende);
+}
+wegziehen(document.getElementById('detail'), closeDetail);
+wegziehen(document.getElementById('match'), closeMatch);
+wegziehen(document.getElementById('quiz'), closeQuiz);
+
 window.addEventListener('hashchange',route);
 route();
