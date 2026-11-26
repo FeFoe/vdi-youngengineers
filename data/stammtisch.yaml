@@ -15,4 +15,5 @@ teaser: "Wie jeden letzten Dienstag im Monat. Ort und Anmeldung folgen, sobald d
 feiertage: ["01-01", "05-01", "10-03", "10-31", "12-25", "12-26"]
 
 # Einzelne Termine, die zusätzlich ausfallen (JJJJ-MM-TT), z. B. wegen Sommerpause
-ausfallen: []
+ausfallen:
+  - "2026-12-29"   # Dezember: kein Stammtisch zwischen den Feiertagen, stattdessen Boßeln Mitte Dezember
