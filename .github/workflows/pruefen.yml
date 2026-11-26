@@ -1,5 +1,6 @@
 # Prüft jede Änderung: Hugo-Build, JavaScript- und Python-Syntax.
-# Bewusst sparsam (meist unter 1 Minute): kein Deployment aus GitHub heraus.
+# Pushes und manuelle Läufe nutzen den eigenen Runner im vdiye-LXC (keine Action-Minuten).
+# Pull Requests laufen auf GitHub-Runnern, damit fremder Code nie auf dem eigenen Server ausgeführt wird.
 # Die VM holt sich neue Commits selbst (deploy/systemd/ye-website.timer) – dafür braucht GitHub weder SSH-Zugang noch Secrets.
 name: Prüfen
 
@@ -20,17 +21,20 @@ permissions:
 
 jobs:
   bauen:
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-latest' || fromJSON('["self-hosted", "vdiye"]') }}
     timeout-minutes: 5
     env:
       HUGO_VERSION: "0.169.0"
     steps:
       - uses: actions/checkout@v4
 
-      - name: Hugo installieren
+      - name: Hugo bereitstellen
         run: |
-          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" | tar -xz -C /usr/local/bin hugo
-          hugo version
+          if ! hugo version 2>/dev/null | grep -q "v${HUGO_VERSION}"; then
+            mkdir -p "$RUNNER_TEMP/bin"
+            curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" | tar -xz -C "$RUNNER_TEMP/bin" hugo
+            echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          fi
 
       - name: Skripte prüfen
         run: |
@@ -41,9 +45,12 @@ jobs:
       - name: Website bauen (ohne Termine von vdi.de und ohne WhatsApp-Daten)
         env:
           HUGO_VORSCHAU: "1"
-        run: hugo --gc --minify --panicOnWarning
+        run: |
+          hugo version
+          hugo --gc --minify --panicOnWarning --destination "$RUNNER_TEMP/public"
 
       - name: Keine WhatsApp-Daten im Build
         run: |
-          ! grep -rqE "chat\.whatsapp\.com/[A-Za-z0-9]{10,}|wa\.me/[0-9]{8,}" public/
-          grep -q "Disallow: /" public/robots.txt
+          ! grep -rqE "chat\.whatsapp\.com/[A-Za-z0-9]{10,}|wa\.me/[0-9]{8,}" "$RUNNER_TEMP/public/"
+          grep -q "Disallow: /" "$RUNNER_TEMP/public/robots.txt"
+          rm -rf "$RUNNER_TEMP/public"

@@ -97,7 +97,7 @@ main ──── VM holt alle 5 min ──▶ Hugo-Build ──▶ Caddy (HTTPS
                  vdi.de ── Termine 05:30 und 17:30 Uhr
 ```
 
-- **CI:** [`.github/workflows/pruefen.yml`](.github/workflows/pruefen.yml) baut die Seite, prüft die Skripte und stellt sicher, dass keine WhatsApp-Daten im Build landen. Läuft nur bei Änderungen an Code und Inhalten, nicht bei Doku.
+- **CI:** [`.github/workflows/pruefen.yml`](.github/workflows/pruefen.yml) baut die Seite, prüft die Skripte und stellt sicher, dass keine WhatsApp-Daten im Build landen. Läuft nur bei Änderungen an Code und Inhalten, nicht bei Doku. Pushes laufen auf einem eigenen Runner im Server-Container (keine Action-Minuten), Pull Requests aus Sicherheitsgründen auf GitHub-Runnern.
 - **CD ohne Action-Minuten:** Die VM holt neue Commits selbst ab (systemd-Timer). GitHub braucht dafür weder SSH-Zugang noch Secrets.
 - **Einrichtung:** einmalig `deploy/einrichten.sh --vorschau PASSWORT` (nicht indexiert, Passwortschutz) oder `--live` – siehe [`deploy/README.md`](deploy/README.md).
 
