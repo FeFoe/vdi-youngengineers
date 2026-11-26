@@ -1,0 +1,35 @@
+{{- /* Daten für assets/js/app.js als JSON-Block (kein Netzwerkabruf zur Laufzeit) */ -}}
+{{- $st := slice -}}
+{{- $fotos := slice -}}
+{{- range $s := hugo.Data.stammtische -}}
+  {{- $st = $st | append (dict "id" .id "name" .name "when" .wann "kind" .art "address" .adresse "geo" .geo) -}}
+  {{- with .foto -}}
+    {{- with resources.Get (printf "fotos/%s" .) -}}
+      {{- $b := .Fill "760x570 webp q74" -}}
+      {{- $fotos = $fotos | append (dict "src" $b.RelPermalink "w" $b.Width "h" $b.Height "st" $s.id) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $k := hugo.Data.kontakt -}}
+{{- $w := hugo.Data.kontakt_whatsapp | default dict -}}
+{{- /* WhatsApp-Ziele stehen nie im Klartext im HTML. Mit data/wa_schutz.json (tools/wa_schutz.py) sind sie
+       verschlüsselt und erst nach der ALTCHA-Rechenaufgabe lesbar; ohne die Datei (lokale Entwicklung) nur Base64. */ -}}
+{{- $schutz := hugo.Data.wa_schutz -}}
+{{- $wa := dict -}}
+{{- if and (not $schutz) $w.whatsapp -}}
+  {{- $wa = dict
+      "nummer" ($w.whatsapp | base64Encode)
+      "community" ($w.community | base64Encode)
+      "chat" (printf "https://wa.me/%s" $w.whatsapp | base64Encode)
+      "rabatt" (printf "https://wa.me/%s?text=%s" $w.whatsapp (printf "Hi %s, habt ihr gerade einen Rabattcode für die VDI-Mitgliedschaft?" $k.whatsappName | urlquery) | base64Encode) -}}
+{{- end -}}
+{{- $daten := dict
+    "termine" (partial "termine.html" .)
+    "stammtische" $st
+    "fotos" $fotos
+    "kontakt" (dict "email" $k.email "whatsappName" $k.whatsappName)
+    "schutz" $schutz
+    "wa" $wa
+    "altchaUrl" ("js/altcha/altcha.i18n.min.js" | relURL)
+-}}
+<script type="application/json" id="ye-daten">{{ $daten | jsonify | safeJS }}</script>

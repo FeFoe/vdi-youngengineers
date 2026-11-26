@@ -1,0 +1,1 @@
+ALTCHA 3.5.0 (npm: altcha@3.5.0, dist/main/altcha.i18n.min.js), MIT-Lizenz, siehe LICENSE.txt. https://altcha.org

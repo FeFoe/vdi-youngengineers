@@ -1,0 +1,20 @@
+# Kontaktwege der Young Engineers Hamburg (Startseite, Formular, Kontakt-Abschnitt).
+# WhatsApp-Nummer und Community-Link stehen bewusst NICHT hier, sondern in data/kontakt_whatsapp.yaml
+# (nicht im Git, Vorlage: data/kontakt_whatsapp.beispiel.yaml), damit Bots sie nicht aus dem öffentlichen Repo lesen.
+email: hamburg@young-engineers.vdi.de
+whatsappName: Hendrik              # Anrede in vorbereiteten WhatsApp-Nachrichten
+instagram: https://www.instagram.com/vdi_youngengineers_hamburg/
+instagramName: "@vdi_youngengineers_hamburg"
+vdiSeite: https://www.vdi.de/netzwerke-community/bezirksvereine/hamburger-bezirksverein-ev/netzwerke-aktivitaeten/young-engineers
+mitgliedschaft: https://www.vdi.de/mitgliedschaft
+
+leitungsteam:
+  - name: Hendrik Husung
+    rolle: Leitungsteam
+    foto: team/hendrik.jpg
+    bildrecht: "© Nadine Grenningloh"
+  - name: Lennart Böge
+    rolle: Leitungsteam
+    foto: team/lennart.jpg
+    bildrecht: "© Nadine Grenningloh"
+

@@ -1,0 +1,6 @@
+# WhatsApp-Kontakt – diese Datei NICHT committen (steht in .gitignore).
+# Kopie anlegen als data/kontakt_whatsapp.yaml und echte Werte eintragen.
+# Die Website zeigt Nummer und Link nie im Klartext: tools/wa_schutz.py verschlüsselt sie beim Bauen,
+# erst nach Quiz und ALTCHA-Rechenaufgabe werden sie im Browser entschlüsselt.
+whatsapp: "49XXXXXXXXXXX"   # internationale Nummer ohne + und ohne Leerzeichen, für wa.me-Links
+community: https://chat.whatsapp.com/XXXXXXXXXXXXXXXXXXXXXX
