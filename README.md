@@ -13,6 +13,7 @@ Website der Young Engineers im VDI Hamburger Bezirksverein e. V. – das Netzwer
 
 - **Termine automatisch von vdi.de** – ein Scraper liest zweimal täglich die Veranstaltungen des Hamburger Bezirksvereins, der Nachbar-BVs, der Young Engineers bundesweit und der VDI-Webinare. Kinderangebote werden ausgefiltert.
 - **Stammtisch-Prognose** – der Stammtisch am letzten Dienstag im Monat erscheint vorab als „geplant“ (außer an Hamburger Feiertagen) und wird ersetzt, sobald der echte Termin auf vdi.de steht. Im Kalender-Abo `/termine.ics` als Serientermin.
+- **Meine Arbeitskreise** – Filter auf ausgewählte Arbeitskreise (YE-Termine bleiben sichtbar), gespeichert nur im Browser. Termine ordnet der Scraper per Tabelle zu, überregionale ohne Arbeitskreis (z. B. VDI-Webinare) nach Stichworten. Dazu ein Kalender-Abo nur mit der eigenen Auswahl: `/kalender/auswahl.ics?ak=…`, von Caddy beim Abruf zusammengesetzt.
 - **Termine entdecken** – Karten zum Wischen, Programm mit Filtern nach Veranstalter und Umkreis, Merkliste im Browser, Kalenderdatei je Termin.
 - **Stammtisch-Karte** – alle bisherigen Orte auf einer eigenen Hamburg-Karte, verknüpft mit dem Fotostreifen.
 - **Raus aus Hamburg** – Rückblick auf Kongress & DIT, EYE-Konferenzen, Regionalrunden und mehr.
@@ -50,6 +51,7 @@ Ohne die erzeugten Dateien baut die Seite trotzdem – dann ohne vdi.de-Termine 
 | Vergangene Stammtische (Karte, Fotos) | [`data/stammtische.yaml`](data/stammtische.yaml) + Foto in `assets/fotos/` |
 | Stammtisch-Regel, Feiertage, Ausfälle | [`data/stammtisch.yaml`](data/stammtisch.yaml) |
 | Termine von vdi.de korrigieren oder ausblenden | [`data/termine_anpassungen.yaml`](data/termine_anpassungen.yaml) |
+| Arbeitskreise für „Meine Arbeitskreise“: Name, Zuordnung, Stichworte | [`data/arbeitskreise.toml`](data/arbeitskreise.toml) |
 | Eigener Termin, der nicht auf vdi.de steht | neue Datei in `content/termine/` (Vorlage unten) |
 | VDI-Angebote | [`data/angebote.yaml`](data/angebote.yaml) |
 | Feste Links der Linkseite `/links/` (Instagram-Bio) | [`data/links.yaml`](data/links.yaml) – Termine dort kommen automatisch |

@@ -68,6 +68,11 @@
           <button class="chip" id="online-toggle" aria-pressed="true">Online-Termine</button>
           <span class="rnote" id="radius-note" aria-live="polite"></span>
         </div>
+        <div class="fak">
+          <span class="flabel" aria-hidden="true">Fach</span>
+          <button class="chip" id="ak-knopf" type="button" aria-haspopup="dialog" aria-pressed="false">Meine Arbeitskreise <span class="count" id="cnt-ak" hidden>0</span></button>
+          <span class="rnote" id="ak-note" aria-live="polite"></span>
+        </div>
       </div>
     </div>
   </div>
@@ -279,6 +284,9 @@
 </div>
 <div class="overlay" id="match-overlay" hidden>
   <div class="match" role="dialog" aria-modal="true" aria-labelledby="m-title" id="match"></div>
+</div>
+<div class="overlay" id="ak-overlay" hidden>
+  <div class="detail ak-dialog" role="dialog" aria-modal="true" aria-labelledby="ak-title" id="ak-dialog"></div>
 </div>
 <div class="overlay" id="quiz-overlay" hidden>
   <div class="match quiz" role="dialog" aria-modal="true" aria-labelledby="q-title" id="quiz"></div>

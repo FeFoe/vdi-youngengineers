@@ -1,0 +1,20 @@
+{{- /* Ein Termin als VEVENT; Kontext: dict "e" (Termin) "host" */ -}}
+{{- $host := .host -}}
+{{- $esc := `([,;\\])` -}}
+{{- with .e -}}
+BEGIN:VEVENT
+UID:{{ .id }}@{{ $host }}
+DTSTAMP:{{ now.UTC.Format "20060102T150405Z" }}
+{{ if .allday -}}
+DTSTART;VALUE=DATE:{{ replace .start "-" "" }}
+DTEND;VALUE=DATE:{{ ((time.AsTime (.end | default .start)).AddDate 0 0 1).Format "20060102" }}
+{{ else -}}
+DTSTART:{{ (time.AsTime .start).UTC.Format "20060102T150405Z" }}
+DTEND:{{ if .end }}{{ (time.AsTime .end).UTC.Format "20060102T150405Z" }}{{ else }}{{ ((time.AsTime .start).Add (time.ParseDuration "3h")).UTC.Format "20060102T150405Z" }}{{ end }}
+{{ end -}}
+SUMMARY:{{ replaceRE $esc `\$1` .title }}
+LOCATION:{{ replaceRE $esc `\$1` (delimit (slice .place .address) ", ") }}
+DESCRIPTION:{{ replaceRE $esc `\$1` (.teaser | default "") }}\n\n{{ .url }}
+URL:{{ .url }}
+END:VEVENT
+{{- end -}}

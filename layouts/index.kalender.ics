@@ -1,77 +1,13 @@
+{{- /* Kalender-Abo /termine.ics mit allen kommenden Terminen.
+       Nebenbei entstehen die Bausteine für /kalender/auswahl.ics?ak=… (siehe partials/kalender/bausteine.html). */ -}}
 {{- $host := (urls.Parse site.BaseURL).Host -}}
-{{- $esc := `([,;\\])` -}}
 {{- $alle := partial "termine.html" . -}}
-{{- $r := hugo.Data.stammtisch -}}
-BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//VDI Hamburg Young Engineers//Termine//DE
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-X-WR-CALNAME:VDI Hamburg – Young Engineers
-X-WR-TIMEZONE:Europe/Berlin
-REFRESH-INTERVAL;VALUE=DURATION:PT12H
-BEGIN:VTIMEZONE
-TZID:Europe/Berlin
-BEGIN:DAYLIGHT
-TZOFFSETFROM:+0100
-TZOFFSETTO:+0200
-TZNAME:CEST
-DTSTART:19700329T020000
-RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
-END:DAYLIGHT
-BEGIN:STANDARD
-TZOFFSETFROM:+0200
-TZOFFSETTO:+0100
-TZNAME:CET
-DTSTART:19701025T030000
-RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
-END:STANDARD
-END:VTIMEZONE
-{{- with $r }}
-{{- /* Stammtisch als Serientermin ohne Ende: letzter Dienstag im Monat.
-       Ausnahmen: Hamburger Feiertage, data/stammtisch.yaml „ausfallen“ und Monate mit konkretem YE-Termin (der steht dann einzeln drin). */}}
-{{- $tage := slice "SU" "MO" "TU" "WE" "TH" "FR" "SA" }}
-{{- $zeit := printf "T%s00" (replace $r.beginn ":" "") }}
-{{- $yeMonate := slice }}
-{{- range $alle }}{{ if and (eq .group "ye") (not .geplant) }}{{ $yeMonate = $yeMonate | append (substr .start 0 7) }}{{ end }}{{ end }}
-{{- $ausnahmen := slice }}
-{{- range $j := seq now.Year (add now.Year 10) }}{{ range $m := seq 1 12 }}
-  {{- $letzter := (time.AsTime (printf "%d-%02d-01" $j $m)).AddDate 0 1 -1 }}
-  {{- $tag := $letzter.AddDate 0 0 (mul -1 (mod (add (sub (int $letzter.Weekday) $r.wochentag) 7) 7)) }}
-  {{- if or (in $r.feiertage ($tag.Format "01-02")) (in ($r.ausfallen | default slice) ($tag.Format "2006-01-02")) (in $yeMonate ($tag.Format "2006-01")) }}
-    {{- $ausnahmen = $ausnahmen | append (printf "%s%s" ($tag.Format "20060102") $zeit) }}
-  {{- end }}
-{{- end }}{{ end }}
-BEGIN:VEVENT
-UID:stammtisch-serie@{{ $host }}
-DTSTAMP:{{ now.UTC.Format "20060102T150405Z" }}
-DTSTART;TZID=Europe/Berlin:20250128{{ $zeit }}
-DTEND;TZID=Europe/Berlin:20250128T{{ replace $r.ende ":" "" }}00
-RRULE:FREQ=MONTHLY;BYDAY=-1{{ index $tage $r.wochentag }}
-{{ with $ausnahmen }}EXDATE;TZID=Europe/Berlin:{{ delimit . "," }}
+{{- $konkret := where $alle "geplant" "!=" true -}}
+{{- $serie := partial "kalender/serie.html" (dict "alle" $alle "host" $host) | strings.TrimSpace -}}
+{{ partial "kalender/kopf.html" "VDI Hamburg – Young Engineers" | strings.TrimSpace }}
+{{ with $serie }}{{ . }}
 {{ end -}}
-SUMMARY:{{ $r.titel }}
-LOCATION:Hamburg (Ort folgt)
-DESCRIPTION:{{ replaceRE $esc `\$1` $r.teaser }}
-URL:{{ site.BaseURL }}
-STATUS:TENTATIVE
-END:VEVENT
-{{- end }}
-{{ range where $alle "geplant" "!=" true -}}
-BEGIN:VEVENT
-UID:{{ .id }}@{{ $host }}
-DTSTAMP:{{ now.UTC.Format "20060102T150405Z" }}
-{{ if .allday -}}
-DTSTART;VALUE=DATE:{{ replace .start "-" "" }}
-DTEND;VALUE=DATE:{{ ((time.AsTime (.end | default .start)).AddDate 0 0 1).Format "20060102" }}
-{{ else -}}
-DTSTART:{{ (time.AsTime .start).UTC.Format "20060102T150405Z" }}
-DTEND:{{ if .end }}{{ (time.AsTime .end).UTC.Format "20060102T150405Z" }}{{ else }}{{ ((time.AsTime .start).Add (time.ParseDuration "3h")).UTC.Format "20060102T150405Z" }}{{ end }}
-{{ end -}}
-SUMMARY:{{ replaceRE $esc `\$1` .title }}
-LOCATION:{{ replaceRE $esc `\$1` (delimit (slice .place .address) ", ") }}
-DESCRIPTION:{{ replaceRE $esc `\$1` (.teaser | default "") }}\n\n{{ .url }}
-URL:{{ .url }}
-END:VEVENT
+{{ range $konkret }}{{ partial "kalender/termin.html" (dict "e" . "host" $host) | strings.TrimSpace }}
 {{ end -}}
 END:VCALENDAR
+{{- partial "kalender/bausteine.html" (dict "konkret" $konkret "serie" $serie "host" $host) -}}
