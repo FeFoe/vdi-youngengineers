@@ -25,10 +25,6 @@ Für Fragen zu den Hamburger Young Engineers und zu dieser Website: [hamburg@you
 
 {{< verein "register" >}}
 
-## Inhaltlich verantwortlich
-
-Leitungsteam von VDI Hamburg – Young Engineers (Hendrik Husung, Lennart Böge), Anschrift wie oben.
-
 ## Termine von vdi.de
 
 Die Termine werden automatisch von den öffentlichen Veranstaltungsseiten auf [vdi.de](https://www.vdi.de) übernommen. Verbindlich sind die Angaben und die Anmeldung auf vdi.de.

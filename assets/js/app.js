@@ -503,11 +503,11 @@ function renderNext(){
   const up=upcoming();
   const nah=filtered().filter(x=>x.mode!=='online');
   const echt=up.filter(x=>!x.geplant), plan=up.find(x=>x.geplant);
-  const e=echt.find(x=>x.group==='ye') || echt.find(x=>x.tipp) || nah.find(x=>x.group==='hh'&&!x.geplant) || nah.find(x=>!x.geplant) || echt[0];
+  const e=echt.find(x=>x.group==='ye') || echt.find(x=>x.tipp) || nah.find(x=>x.group==='hh'&&!x.geplant) || nah.find(x=>!x.geplant) || echt[0] || plan; /* keine vdi.de-Termine: geplanten Stammtisch zeigen (#4) */
   const box=document.getElementById('nextcard');
   if (!e){ box.innerHTML='<p class="m-text">Gerade sind keine Termine eingetragen. In der WhatsApp-Community erfährst du als Erstes vom nächsten.</p>'; return; }
   const more=filtered().filter(x=>x.id!==e.id && !x.geplant && (reg(x).open||reg(x).pending)).slice(0,3);
-  const planHinweis = plan && (e.group!=='ye' || startDate(plan)<startDate(e))
+  const planHinweis = plan && plan!==e && (e.group!=='ye' || startDate(plan)<startDate(e))
     ? '<p class="nc-plan">Nächster Stammtisch voraussichtlich '+esc(fLong.format(startDate(plan)))+', Ort und Anmeldung folgen.</p>' : '';
   box.innerHTML=
     '<p class="nc-kicker">'+(e.geplant?'Nächster Stammtisch (geplant)':e.group==='ye'?'Nächster Stammtisch':'Nächstes Highlight')+'</p>'+
