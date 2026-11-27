@@ -103,6 +103,8 @@ main ──── VM holt alle 5 min ──▶ Hugo-Build ──▶ Caddy (HTTPS
 - **CD ohne Action-Minuten:** Die VM holt neue Commits selbst ab (systemd-Timer). GitHub braucht dafür weder SSH-Zugang noch Secrets.
 - **Einrichtung:** einmalig `deploy/einrichten.sh --vorschau PASSWORT` (nicht indexiert, Passwortschutz) oder `--live` – siehe [`deploy/README.md`](deploy/README.md).
 
+Beiträge und Pull Requests: siehe [CONTRIBUTING.md](CONTRIBUTING.md) (Screenshots vorher/nachher bei sichtbaren Änderungen).
+
 ## Lizenz
 
 - **Code** (Templates, CSS, JavaScript, Skripte): [MIT](LICENSE)
