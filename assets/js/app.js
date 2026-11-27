@@ -605,6 +605,7 @@ function placePop(){
   const w=pop.offsetWidth, h=pop.offsetHeight;
   let left=Math.max(8,Math.min(box.width-w-8,px-w/2)), top=py-30*s0-h-6, below=false;
   if (top<8){ top=py+10; below=true; }
+  if (below && top+h>box.height-8) top=Math.max(8,box.height-h-8); /* passt weder über noch unter den Pin: in der Karte halten */
   pop.style.left=left+'px'; pop.style.top=top+'px'; pop.classList.toggle('below',below);
 }
 (function(){
@@ -659,6 +660,8 @@ function renderMap(){
     ? (()=>{ const f=FOTOS.find(x=>x.st===sel.x.id); return (f?'<img class="mp-foto" src="'+esc(f.src)+'" width="'+f.w+'" height="'+f.h+'" alt="Stammtisch im '+esc(sel.x.name)+', '+esc(sel.x.when)+'">':'')+'<b class="mp-name">'+esc(sel.x.name)+'</b><span class="mp-when">'+esc(sel.x.when)+'</span>'; })()
     : '<span class="mp-when up">Demnächst</span>'+sel.evs.map(e=>'<button type="button" class="mp-ev" data-open="'+e.id+'"><b>'+esc(fShort.format(startDate(e)).replace(/\.$/,''))+'.</b> '+esc(e.title)+'</button>').join('');
   pop.hidden=false;
+  /* Foto lädt erst nach dem Einblenden: danach Popup neu ausrichten, sonst ragt es über die Karte hinaus */
+  const foto=pop.querySelector('img'); if(foto && !foto.complete) foto.addEventListener('load',placePop,{once:true});
   applyVB();
 }
 document.addEventListener('click',ev=>{ const b=ev.target.closest('[data-pin-sel]'); if(!b) return; mapSel=b.dataset.pinSel; renderMap();
@@ -894,6 +897,53 @@ function akSchliessen(){ document.getElementById('ak-overlay').hidden=true; if(a
 document.getElementById('ak-knopf').onclick=akOeffnen;
 document.getElementById('ak-overlay').addEventListener('click',ev=>{ if(ev.target.id==='ak-overlay') akSchliessen(); });
 if(!AKS.length) document.querySelector('.fak').hidden=true;
+/* ---------- Handy: Fenster nach unten wegziehen ----------
+   Auf schmalen Bildschirmen docken Termin-Details, „Gemerkt“ und die WhatsApp-Frage unten an.
+   Steht der Inhalt ganz oben, zieht eine Wischbewegung nach unten das Fenster mit und schließt es
+   ab einem Viertel der Höhe (oder bei schnellem Wischen). Sonst scrollt der Inhalt wie gewohnt. */
+const schmal=matchMedia('(max-width:640px)');
+function wegziehen(sheet, schliessen){
+  if(!sheet) return;
+  const overlay=sheet.parentElement;
+  let y0=0, x0=0, t0=0, dy=0, aktiv=false, entschieden=false;
+  const zuruecksetzen=()=>{ sheet.classList.remove('ziehen'); sheet.style.transform=''; overlay.style.background=''; };
+  sheet.addEventListener('touchstart',ev=>{
+    aktiv = schmal.matches && ev.touches.length===1 && sheet.scrollTop<=0;
+    if(!aktiv) return;
+    const t=ev.touches[0]; y0=t.clientY; x0=t.clientX; t0=performance.now(); dy=0; entschieden=false;
+  },{passive:true});
+  sheet.addEventListener('touchmove',ev=>{
+    if(!aktiv) return;
+    if(ev.touches.length!==1){ aktiv=false; zuruecksetzen(); return; }
+    const t=ev.touches[0], d=t.clientY-y0, dx=t.clientX-x0;
+    if(!entschieden){
+      if(Math.abs(d)<6 && Math.abs(dx)<6) return;
+      entschieden=true;
+      if(d<=0 || Math.abs(dx)>Math.abs(d)){ aktiv=false; return; } /* nach oben oder seitwärts: normal scrollen */
+      sheet.classList.add('ziehen');
+    }
+    if(ev.cancelable) ev.preventDefault();
+    dy=Math.max(0,d);
+    sheet.style.transform='translateY('+dy+'px)';
+    overlay.style.background='rgba(0,12,25,'+(0.5*Math.max(0,1-dy/sheet.offsetHeight)).toFixed(3)+')';
+  },{passive:false});
+  const ende=()=>{
+    if(!aktiv) return; aktiv=false;
+    if(!entschieden){ return; }
+    const tempo=dy/Math.max(1,performance.now()-t0);
+    sheet.classList.remove('ziehen');
+    if(dy>sheet.offsetHeight*0.25 || (dy>40 && tempo>0.6)){
+      sheet.style.transform='translateY(100%)'; overlay.style.background='rgba(0,12,25,0)';
+      setTimeout(()=>{ schliessen(); zuruecksetzen(); }, reduce?0:200);
+    } else zuruecksetzen();
+    dy=0;
+  };
+  sheet.addEventListener('touchend',ende); sheet.addEventListener('touchcancel',ende);
+}
+wegziehen(document.getElementById('detail'), closeDetail);
+wegziehen(document.getElementById('match'), closeMatch);
+wegziehen(document.getElementById('quiz'), closeQuiz);
+wegziehen(document.getElementById('ak-dialog'), akSchliessen);
 
 window.addEventListener('hashchange',route);
 route();

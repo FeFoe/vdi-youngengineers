@@ -84,6 +84,8 @@ ul.tiles .tile{flex:1}
 
 /* Fotos im Karten-Popup */
 .mpop .mp-foto{display:block;width:220px;max-width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:6px;margin:2px 0 8px}
+/* Handy: Foto im Popup kleiner, sonst verdeckt das Popup die halbe Karte und wird unten abgeschnitten */
+@media (max-width:640px){.mpop .mp-foto{width:150px;margin-bottom:6px}}
 
 /* Kopf und Fuß: erst Hamburger Bezirksverein, dann Young Engineers */
 .brand-txt span{order:0}
@@ -259,3 +261,11 @@ html{overflow-x:clip}
 .ak-hinweis{margin:0;font-size:14px;color:var(--muted)}
 .sf .sf-ak dd span{font-weight:400;color:var(--muted)}
 @media (max-width:640px){.ak-liste{grid-template-columns:minmax(0,1fr)}}
+/* Handy: Fenster unten angedockt, mit Griff zum Herunterziehen (app.js: wegziehen) */
+@media (max-width:640px){
+  .detail,.match{transition:transform .2s ease;overscroll-behavior:contain}
+  .detail.ziehen,.match.ziehen{transition:none}
+  .detail::before,.match::before{content:"";display:block;width:40px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0}
+  .overlay{transition:background .2s ease}
+}
+@media (max-width:640px) and (prefers-reduced-motion:reduce){.detail,.match,.overlay{transition:none}}
