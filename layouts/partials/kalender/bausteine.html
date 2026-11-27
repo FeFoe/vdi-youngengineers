@@ -1,7 +1,7 @@
 {{- /* Bausteine für den zusammengesetzten Kalender /kalender/auswahl.ics?ak=schluessel1,schluessel2
        Caddy setzt ihn beim Abruf aus diesen Dateien zusammen (assets/kalender/auswahl.caddy, deploy/Caddyfile):
          /kalender/t/<termin-id>.ics   ein VEVENT je Termin (und stammtisch-serie.ics)
-         /kalender/ak/_ye.txt          Termine, die immer drin sind (YE Hamburg, bundesweite YE-Formate)
+         /kalender/ak/_ye.txt          Termine, die immer drin sind (YE Hamburg, YE-Netzwerk ohne Fachbezug)
          /kalender/ak/<schluessel>.txt Termin-IDs je Arbeitskreis (data/arbeitskreise.toml), eine pro Zeile
          /kalender/auswahl.ics         Caddy-Vorlage mit Kalenderkopf
        Kontext: dict "konkret" (Termine ohne Prognosen) "serie" (VEVENT der Stammtisch-Serie) "host" */ -}}
@@ -15,7 +15,8 @@
 {{- range $e := .konkret -}}
   {{- $inhalt := partial "kalender/termin.html" (dict "e" $e "host" $host) | strings.TrimSpace -}}
   {{- (resources.FromString (printf "kalender/t/%s.ics" $e.id) (printf "%s\n" $inhalt)).Publish -}}
-  {{- if or (eq $e.group "ye") (and (eq $e.group "yenet") (ne $e.mode "reise")) }}{{ $ye = $ye | append $e.id }}{{ end -}}
+  {{- /* wie immerSichtbar() in app.js: YE Hamburg, YE-Netzwerk ohne Fachbezug */ -}}
+  {{- if or (eq $e.group "ye") (and (eq $e.group "yenet") (not $e.ak)) }}{{ $ye = $ye | append $e.id }}{{ end -}}
   {{- range $a := ($e.ak | default slice) -}}
     {{- $proAk = merge $proAk (dict $a ((index $proAk $a | default slice) | append $e.id)) -}}
   {{- end -}}

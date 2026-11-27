@@ -18,12 +18,12 @@
 [bahntechnik]
 name = "Bahntechnik"
 ak = 'Bahntechnik'
-stichworte = '\bBahn|Schiene|Eisenbahn|\bICE\b'
+stichworte = '\bBahn|Schiene|Eisenbahn|(?-i:\bICE\b)'
 
 [bautechnik]
 name = "Bautechnik"
 ak = 'Bautechnik'
-stichworte = 'Bautechnik|Bauwesen|Hochbau|Tiefbau|Brücke|Beton|Bauwerk|\bBIM\b|Starkregen|Baustelle'
+stichworte = 'Bautechnik|Bauwesen|Hochbau|Tiefbau|Brücke|Beton|Bauwerk|(?-i:\bBIM\b)|Starkregen|Baustelle'
 
 [betriebswirtschaft]
 name = "Betriebswirtschaft, Management und Vertrieb"
@@ -43,7 +43,7 @@ stichworte = 'Energie|\bStrom(netz|versorgung|markt)?\b|Wasserstoff|Photovoltaik
 [entwicklung-konstruktion]
 name = "Entwicklung und Konstruktion"
 ak = 'Entwicklung,? Konstruktion|Konstruktion'
-stichworte = 'Konstruktion|Produktentwicklung|\bCAD\b|Simulation|\bFEM\b|Systems Engineering|Design Thinking'
+stichworte = 'Konstruktion|Produktentwicklung|(?-i:\bCAD\b)|Simulation|(?-i:\bFEM\b)|Systems Engineering|Design Thinking'
 
 [facility-management]
 name = "Facility Management"
@@ -53,12 +53,12 @@ stichworte = 'Facility|Gebäudemanagement|Immobilie'
 [fahrzeugtechnik]
 name = "Fahrzeug- und Verkehrstechnik"
 ak = 'Fahrzeug'
-stichworte = 'Fahrzeug|Automobil|Elektromobil|E-Mobil|Verkehr|Mobilität|autonomes Fahren|\bLkw\b|\bPkw\b'
+stichworte = 'Fahrzeug|Automobil|Elektromobil|E-Mobil|Verkehr|Mobilität|autonomes Fahren|(?-i:\bLkw\b)|(?-i:\bPkw\b)'
 
 [foerdertechnik]
 name = "Fördertechnik, Materialfluss und Logistik"
 ak = 'Fördertechnik'
-stichworte = 'Fördertechnik|Materialfluss|Intralogistik|Lagertechnik|\bKran'
+stichworte = 'Fördertechnik|Materialfluss|Intralogistik|Lagertechnik|\bKran(e|bau|technik)?\b'
 
 [frauen-im-ingenieurberuf]
 name = "Frauen im Ingenieurberuf"
@@ -68,7 +68,7 @@ stichworte = 'Frauen|Ingenieurinnen|WoMentorING|Female'
 [informationstechnik]
 name = "Informations- und Medientechnik"
 ak = 'Informations- und Medientechnik|Informationstechnik'
-stichworte = 'Informatik|Quanten|\bIT\b|IT-|Software|Digitalisierung|\bDaten|Cloud|Cyber|Security|Medientechnik'
+stichworte = 'Informatik|Quanten|(?-i:\bIT\b)|(?-i:\bIT-)|Software|Digitalisierung|\bDaten|Cloud|Cyber|Security|Medientechnik'
 
 [ingenieur-gesellschaft]
 name = "Ingenieur und Gesellschaft"
@@ -88,7 +88,7 @@ stichworte = 'Luftfahrt|Raumfahrt|Flugzeug|Aviation|Airbus|Lufthansa|Satellit|Dr
 [medizintechnik]
 name = "Medizintechnik"
 ak = 'Medizintechnik'
-stichworte = 'Medizin|Klinik|Krankenhaus|Gesundheit|Medical|Healthcare|Prothese'
+stichworte = 'Medizintechnik|Medizinprodukt|Medizinische|Klinik|Krankenhaus|Medical|Healthcare|Prothese'
 
 [meer-kueste-hafen]
 name = "Meer, Küste, Hafen"
@@ -98,7 +98,7 @@ stichworte = 'Hafen|Küste|\bMeer\b|Meeres|Offshore|Hochwasser|Sturmflut|Deich|W
 [mess-und-automatisierungstechnik]
 name = "Mess- und Automatisierungstechnik"
 ak = 'Mess- und Automatisierung'
-stichworte = 'Messtechnik|Automatisierung|Automation|Sensor|Regelungstechnik|\bSPS\b|Prozessleit'
+stichworte = 'Messtechnik|Automatisierung|Automation|Sensor|Regelungstechnik|(?-i:\bSPS\b)|Prozessleit'
 
 [mikroelektronik]
 name = "Mikroelektronik"
@@ -118,7 +118,7 @@ stichworte = 'Logistik|Supply Chain|Lieferkette|\bLean\b'
 [produktionstechnik]
 name = "Produktionstechnik"
 ak = 'Produktionstechnik'
-stichworte = 'Produktionstechnik|Fertigung|Additive|3D-Druck|Werkzeugmaschine|\bCNC|Industrie 4\.0|Fabrik'
+stichworte = 'Produktionstechnik|Fertigung|Additive|3D-Druck|Werkzeugmaschine|(?-i:\bCNC)|Industrie 4\.0|Fabrik'
 
 [risikomanagement]
 name = "Risikomanagement und Zuverlässigkeit"
@@ -128,7 +128,7 @@ stichworte = 'Risiko|Zuverlässigkeit|Sicherheitstechnik|Funktionale Sicherheit|
 [robotik-ki]
 name = "Robotik und angewandte KI"
 ak = 'Robotik'
-stichworte = 'Robot|Cobot|\bKI\b|Künstliche Intelligenz|\bAI\b|Machine Learning|ChatGPT|\bLLM'
+stichworte = 'Robot|Cobot|(?-i:\bKI\b)|Künstliche Intelligenz|(?-i:\bAI\b)|Machine Learning|ChatGPT|(?-i:\bLLMs?\b)'
 
 [schiffbau]
 name = "Schiffbau und Schiffstechnik"
@@ -148,7 +148,7 @@ stichworte = 'Schwingung|Akustik|Lärm|Vibration|\bSchall'
 [technische-gebaeudeausruestung]
 name = "Technische Gebäudeausrüstung"
 ak = 'Technische Gebäudeausrüstung'
-stichworte = 'Gebäudetechnik|Gebäudeausrüstung|\bTGA\b|Heizung|Lüftung|Klimatechnik|Sanitär|Smart Home|Wärmepumpe'
+stichworte = 'Gebäudetechnik|Gebäudeausrüstung|(?-i:\bTGA\b)|Heizung|Lüftung|Klimatechnik|Sanitär|Smart Home|Wärmepumpe'
 
 [umwelttechnik]
 name = "Umwelttechnik"
