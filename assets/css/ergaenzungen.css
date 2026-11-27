@@ -245,3 +245,12 @@ html{overflow-x:clip}
 /* Karte im Stapel: Titel hat Vorrang, die Kurzbeschreibung kürzt app.js bei Platzmangel (fitCard) */
 .sheetcard .sc-title{flex:none;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .sheetcard .sc-text{flex:none}
+
+/* Handy: Fenster unten angedockt, mit Griff zum Herunterziehen (app.js: wegziehen) */
+@media (max-width:640px){
+  .detail,.match{transition:transform .2s ease;overscroll-behavior:contain}
+  .detail.ziehen,.match.ziehen{transition:none}
+  .detail::before,.match::before{content:"";display:block;width:40px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0}
+  .overlay{transition:background .2s ease}
+}
+@media (max-width:640px) and (prefers-reduced-motion:reduce){.detail,.match,.overlay{transition:none}}
