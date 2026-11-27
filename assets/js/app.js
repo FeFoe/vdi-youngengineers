@@ -100,8 +100,9 @@ function persist(){
 const byId = id => EVENTS.find(e=>e.id===id);
 function upcoming(){ const now=new Date(); return EVENTS.filter(e=>endDate(e)>now && !AUSGEBLENDET.some(h=>(e.url||'').endsWith('/'+h.slug))).sort((a,b)=>startDate(a)-startDate(b)); }
 function byChips(e){ return (!state.group.size||state.group.has(e.group))&&(state.online||e.mode!=='online')&&akPasst(e); }
-/* Meine Arbeitskreise: YE Hamburg und bundesweite YE-Formate bleiben immer sichtbar */
-function immerSichtbar(e){ return e.group==='ye' || (e.group==='yenet' && e.mode!=='reise'); }
+/* Meine Arbeitskreise: YE Hamburg bleibt immer sichtbar, YE-Netzwerk nur ohne Fachbezug (Welcome Call,
+   Bundesstammtisch …). Fachtermine anderer YE-Gruppen werden wie alle anderen nach Arbeitskreis gefiltert. */
+function immerSichtbar(e){ return e.group==='ye' || (e.group==='yenet' && !(e.ak&&e.ak.length)); }
 function akPasst(e){ return !state.ak.size || immerSichtbar(e) || (e.ak||[]).some(a=>state.ak.has(a)); }
 function filtered(){ return upcoming().filter(e=>inRange(e)&&byChips(e)); }
 
